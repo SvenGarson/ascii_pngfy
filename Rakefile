@@ -3,7 +3,10 @@
 desc('Run all tests')
 task(:run_all_tests) do
   # Bundler if enforced programmatically
-  system('ruby test/test_ascii_pngfy.rb')
+  # Run all text files in this directory
+  Dir.glob(File.join('.', 'test', 'test_*.rb')).each do |test_filename|
+    system("ruby #{test_filename}")
+  end
 end
 
 desc('Run Rubocop on library')

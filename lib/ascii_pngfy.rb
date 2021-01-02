@@ -3,7 +3,8 @@
 require 'rubygems'
 require 'bundler'
 Bundler.require(:default)
-require 'chunky_png'
 
-# Public: Top level namsespace for this gem.
+require 'ascii_pngfy/renderer'
+
+# Public: Top level namespace that that contains all AsciiPngfy functionality.
 module AsciiPngfy; end
