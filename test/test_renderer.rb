@@ -2,7 +2,7 @@
 
 require_relative 'testing_prerequisites'
 
-class TestRenderer < Minitest::Tes
+class TestRenderer < Minitest::Test
   class TestRenderer < AsciiPngfy::Renderer
     # acts as exact replacement to renderer
     # but provides a getter for the settings instance
