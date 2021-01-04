@@ -14,8 +14,3 @@ task(:run_rubocop) do
   # need to enforce using bundle exec
   system('bundle exec rubocop')
 end
-
-desc('Generate RDoc documentation as TomDoc')
-task(:generate_doc) do
-  system('rdoc --markup=tomdoc ./lib')
-end

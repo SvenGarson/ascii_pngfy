@@ -15,6 +15,16 @@ class TestRendererSettings < Minitest::Test
     assert_instance_of(AsciiPngfy::RendererSettings, renderer_settings)
   end
 
-  # test renderer settings instantiation
-  # test renderer settings initialized with expected values
+  def test_that_renderer_settings_initializes_default_font_color_to_white
+    renderer_settings = AsciiPngfy::RendererSettings.new
+
+    default_font_color = renderer_settings.font_color
+
+    assert_equal(255, default_font_color.red,   'Red component should be 255 for white')
+    assert_equal(255, default_font_color.green, 'Green component should be 255 for white')
+    assert_equal(255, default_font_color.blue,  'Blue component should be 255 for white')
+    assert_equal(255, default_font_color.alpha, 'Alpha component should be 255 for white')
+  end
+
+  # cannot mutate color externally!
 end

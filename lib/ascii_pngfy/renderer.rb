@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 module AsciiPngfy
-  # Public: Provides the interface for:
-  #   - renderer settings definition
-  #   - texture generation
+  # Provides the interface to:
+  #  - wrapped rendering setting definition
+  #  - texture and usage meta-information generation
   class Renderer
-    def initialize
-      # initialize renderer settings here
-    end
+    def initialize; end
   end
 end
