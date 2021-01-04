@@ -3,12 +3,6 @@
 require_relative 'testing_prerequisites'
 
 class TestRenderer < Minitest::Test
-  class TestRenderer < AsciiPngfy::Renderer
-    # acts as exact replacement to renderer
-    # but provides a getter for the settings instance
-    # to spy on the attributes
-  end
-
   def test_that_renderer_is_defined
     renderer_defined = defined?(AsciiPngfy::Renderer)
 
@@ -19,10 +13,5 @@ class TestRenderer < Minitest::Test
     renderer = AsciiPngfy::Renderer.new
 
     assert_instance_of(AsciiPngfy::Renderer, renderer)
-  end
-
-  def test_that_renderer_initializes_with_expected_setting_values
-    # renderer_settings = AsciiPngfy::RendererSettings
-    # this is a job for the renderer settings itself
   end
 end
