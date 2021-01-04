@@ -14,4 +14,6 @@ class TestRenderer < Minitest::Test
 
     assert_instance_of(AsciiPngfy::Renderer, renderer)
   end
+
+  # all methods accepting and returning objects cannot leak these objects
 end

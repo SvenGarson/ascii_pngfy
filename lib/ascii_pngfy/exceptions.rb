@@ -6,6 +6,7 @@ module AsciiPngfy
     # Base class to classify AsciiPngfy errors under StandardError
     class AsciiPngfyError < StandardError; end
 
+    # git stat
     class InvalidRGBAColorValueError < AsciiPngfyError
       def initialize(color_value)
         super("#{color_value} is not a valid RGBA value apparently...")

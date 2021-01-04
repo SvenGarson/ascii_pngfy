@@ -29,18 +29,23 @@ module AsciiPngfy
       @alpha = validate_color_value(new_alpha)
     end
 
+    def ==(other)
+      other.red == red &&
+        other.green == green &&
+        other.blue == blue &&
+        other.alpha == alpha
+    end
+
     private
 
     def validate_color_value(color_value)
-      unless valid_color_value?(color_value)
-        raise Exceptions::InvalidRGBAColorValue.new(color_value)
-      end
+      return color_value if valid_color_value?(color_value)
 
-      color_value
+      raise Exceptions::InvalidRGBAColorValueError, color_value
     end
 
     def valid_color_value?(color_value)
-      VALID_RGBA_COLOR_RANGE.cover?(color_value)
+      color_value.is_a?(Integer) && VALID_RGBA_COLOR_RANGE.cover?(color_value)
     end
   end
 end

@@ -76,49 +76,64 @@ class TestColorRGBA < Minitest::Test
   def test_that_color_rgba_raises_error_when_setting_red_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
 
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.red = (-1) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.red = (256) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.red = (-1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.red = (256) }
   end
 
   def test_that_color_rgba_raises_error_when_setting_green_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
 
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.green = (-1) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.green = (256) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.green = (-1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.green = (256) }
   end
 
   def test_that_color_rgba_raises_error_when_setting_blue_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
 
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.blue = (-1) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.blue = (256) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.blue = (-1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.blue = (256) }
   end
 
   def test_that_color_rgba_raises_error_when_setting_alpha_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
 
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.alpha = (-1) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { rgba.alpha = (256) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.alpha = (-1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { rgba.alpha = (256) }
   end
 
-  # raising error on invalid values: check for setters and instantiation
   def test_that_color_rgba_raises_error_when_red_component_initialized_to_invalid_color_value
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(-1, 0, 0, 0) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(256, 0, 0, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(-1, 0, 0, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(256, 0, 0, 0) }
   end
 
   def test_that_color_rgba_raises_error_when_green_component_initialized_to_invalid_color_value
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, -1, 0, 0) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, 256, 0, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, -1, 0, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, 256, 0, 0) }
   end
 
   def test_that_color_rgba_raises_error_when_blue_component_initialized_to_invalid_color_value
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, 0, -1, 0) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, 0, 256, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, 0, -1, 0) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, 0, 256, 0) }
   end
 
   def test_that_color_rgba_raises_error_when_alpha_component_initialized_to_invalid_color_value
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, 0, 0, -1) }
-    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValue) { AsciiPngfy::ColorRGBA.new(0, 0, 0, 256) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, 0, 0, -1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { AsciiPngfy::ColorRGBA.new(0, 0, 0, 256) }
+  end
+
+  def test_that_color_rgba_instances_equal_when_respective_rgba_components_match
+    color =         AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+
+    assert_equal(color, control_color)
+    assert_equal(control_color, color)
+  end
+
+  def test_that_color_rgba_instances_do_not_equal_when_any_rgba_component_mismatches
+    color =         AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 9)
+
+    refute_equal(color, control_color)
+    refute_equal(control_color, color)
   end
 end
