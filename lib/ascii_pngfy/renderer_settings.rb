@@ -15,7 +15,7 @@ module AsciiPngfy
     def initialize
       # initialize rendering attributes here
       self.font_color = ColorRGBA.new(255, 255, 255, 255)
-      self.background_color = ColorRGBA.new(0, 0, 0, 0)
+      self.background_color = ColorRGBA.new(0, 0, 0, 255)
       self.font_size = 9
       self.horizontal_spacing = 1
       self.vertical_spacing = 1

@@ -12,15 +12,27 @@ module AsciiPngfy
     def set_font_color(red: nil, green: nil, blue: nil, alpha: nil)
       current_font_color = settings.font_color
 
-      current_font_color.red = red unless red.nil?
-      current_font_color.green = green unless green.nil?
-      current_font_color.blue = blue unless blue.nil?
-      current_font_color.alpha = alpha unless alpha.nil?
+      set_color_components(red, green, blue, alpha, current_font_color)
 
       current_font_color.dup
     end
 
+    def set_background_color(red: nil, green: nil, blue: nil, alpha: nil)
+      current_background_color = settings.background_color
+
+      set_color_components(red, green, blue, alpha, current_background_color)
+
+      current_background_color.dup
+    end
+
     private
+
+    def set_color_components(red, green, blue, alpha, color)
+      color.red = red unless red.nil?
+      color.green = green unless green.nil?
+      color.blue = blue unless blue.nil?
+      color.alpha = alpha unless alpha.nil?
+    end
 
     attr_accessor(:settings)
   end

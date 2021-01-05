@@ -23,7 +23,7 @@ class TestRendererSettings < Minitest::Test
     assert_equal(255, default_font_color.red,   'Red component should be 255 for white')
     assert_equal(255, default_font_color.green, 'Green component should be 255 for white')
     assert_equal(255, default_font_color.blue,  'Blue component should be 255 for white')
-    assert_equal(255, default_font_color.alpha, 'Alpha component should be 255 for white')
+    assert_equal(255, default_font_color.alpha, 'Alpha component should be 255 for opaque')
   end
 
   def test_that_renderer_settings_initializes_default_background_color_to_black
@@ -34,7 +34,7 @@ class TestRendererSettings < Minitest::Test
     assert_equal(0, default_background_color.red,   'Red component should be 0 for black')
     assert_equal(0, default_background_color.green, 'Green component should be 0 for black')
     assert_equal(0, default_background_color.blue,  'Blue component should be 0 for black')
-    assert_equal(0, default_background_color.alpha, 'Alpha component should be 0 for black')
+    assert_equal(255, default_background_color.alpha, 'Alpha component should be 255 for opaque')
   end
 
   def test_that_renderer_settings_initializes_default_font_size_to_nine
