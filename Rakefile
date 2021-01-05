@@ -4,7 +4,7 @@ desc('Run all tests')
 task(:test_all) do
   # Bundler is enforced programmatically
   # Run all text files in this directory
-  Dir.glob(File.join('.', 'test', 'test_*.rb')).each do |test_filename|
+  Dir.glob(File.join('.', 'test', '**', 'test_*.rb')).each do |test_filename|
     system("ruby #{test_filename}")
   end
 end
@@ -12,8 +12,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # Bundler is enforced programmatically
-  # run current test suite to avoid waiting so long
-  system('ruby ./test/test_renderer.rb')
+  puts 'No current test file defined, what are you working on right now?'
 end
 
 desc('Run Rubocop on library')
