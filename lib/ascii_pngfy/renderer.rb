@@ -10,10 +10,14 @@ module AsciiPngfy
     end
 
     def set_font_color(red: nil, green: nil, blue: nil, alpha: nil)
-      settings.font_color.red = red unless red.nil?
-      settings.font_color.green = green unless green.nil?
-      settings.font_color.blue = blue unless blue.nil?
-      settings.font_color.alpha = alpha unless alpha.nil?
+      current_font_color = settings.font_color
+
+      current_font_color.red = red unless red.nil?
+      current_font_color.green = green unless green.nil?
+      current_font_color.blue = blue unless blue.nil?
+      current_font_color.alpha = alpha unless alpha.nil?
+
+      current_font_color.dup
     end
 
     private
