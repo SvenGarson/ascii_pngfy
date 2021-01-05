@@ -126,7 +126,6 @@ class TestColorRGBA < Minitest::Test
     control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
 
     assert_equal(color, control_color)
-    assert_equal(control_color, color)
   end
 
   def test_that_color_rgba_instances_do_not_equal_when_any_rgba_component_mismatches
@@ -134,6 +133,5 @@ class TestColorRGBA < Minitest::Test
     control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 9)
 
     refute_equal(color, control_color)
-    refute_equal(control_color, color)
   end
 end
