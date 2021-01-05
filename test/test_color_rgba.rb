@@ -2,6 +2,7 @@
 
 require_relative 'testing_prerequisites'
 
+# rubocop:disable Metrics/ClassLength
 class TestColorRGBA < Minitest::Test
   def test_that_color_rgba_is_defined
     color_rgba_defined = defined?(AsciiPngfy::ColorRGBA)
@@ -122,16 +123,38 @@ class TestColorRGBA < Minitest::Test
   end
 
   def test_that_color_rgba_instances_equal_when_respective_rgba_components_match
-    color =         AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
-    control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    color =          AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    matching_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
 
-    assert_equal(color, control_color)
+    assert_equal(color, matching_color)
   end
 
-  def test_that_color_rgba_instances_do_not_equal_when_any_rgba_component_mismatches
-    color =         AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
-    control_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 9)
+  def test_that_color_rgba_instances_do_not_equal_when_red_rgba_component_mismatches
+    color =             AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    mismatching_color = AsciiPngfy::ColorRGBA.new(9, 100, 150, 200)
 
-    refute_equal(color, control_color)
+    refute_equal(color, mismatching_color)
+  end
+
+  def test_that_color_rgba_instances_do_not_equal_when_green_rgba_component_mismatches
+    color =             AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    mismatching_color = AsciiPngfy::ColorRGBA.new(50, 18, 150, 200)
+
+    refute_equal(color, mismatching_color)
+  end
+
+  def test_that_color_rgba_instances_do_not_equal_when_blue_rgba_component_mismatches
+    color =             AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    mismatching_color = AsciiPngfy::ColorRGBA.new(50, 100, 27, 200)
+
+    refute_equal(color, mismatching_color)
+  end
+
+  def test_that_color_rgba_instances_do_not_equal_when_alpha_rgba_component_mismatches
+    color =             AsciiPngfy::ColorRGBA.new(50, 100, 150, 200)
+    mismatching_color = AsciiPngfy::ColorRGBA.new(50, 100, 150, 36)
+
+    refute_equal(color, mismatching_color)
   end
 end
+# rubocop:enable Metrics/ClassLength
