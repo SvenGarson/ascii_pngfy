@@ -2,6 +2,7 @@
 
 require_relative 'testing_prerequisites'
 
+# rubocop:disable Metrics/ClassLength
 class TestRenderer < Minitest::Test
   module TestClasses
     class TestRenderer < AsciiPngfy::Renderer
@@ -119,7 +120,7 @@ class TestRenderer < Minitest::Test
     assert_instance_of(AsciiPngfy::ColorRGBA, new_font_color)
   end
 
-  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_when_some_font_color_components_are_passed_as_argument
+  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_when_multiple_font_color_components_are_set
     test_renderer = TestClasses::TestRenderer.new
 
     new_font_color = test_renderer.set_font_color(red: 125, green: 55, blue: 245)
@@ -127,7 +128,7 @@ class TestRenderer < Minitest::Test
     assert_instance_of(AsciiPngfy::ColorRGBA, new_font_color)
   end
 
-  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_when_all_font_color_components_are_passed_as_argument
+  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_when_all_font_color_components_are_set
     test_renderer = TestClasses::TestRenderer.new
 
     new_font_color = test_renderer.set_font_color(red: 50, green: 100, blue: 150, alpha: 200)
@@ -143,7 +144,7 @@ class TestRenderer < Minitest::Test
     assert_equal(AsciiPngfy::ColorRGBA.new(151, 61, 241, 11), new_font_color)
   end
 
-  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_that_is_a_duplicate_of_the_internal_font_color_rgba_instance
+  def test_that_renderer_set_font_color_returns_instance_of_color_rgba_that_is_a_duplicate_of_the_internal_font_color
     test_renderer = TestClasses::TestRenderer.new
     test_renderer_settings = test_renderer.test_settings
     internal_font_color = test_renderer_settings.font_color
@@ -152,4 +153,33 @@ class TestRenderer < Minitest::Test
 
     refute_same(internal_font_color, new_font_color)
   end
+
+  def test_that_renderer_set_font_color_raises_error_when_setting_red_font_color_component_to_invalid_color_value
+    test_renderer = TestClasses::TestRenderer.new
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(red: -1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(red: 256) }
+  end
+
+  def test_that_renderer_set_font_color_raises_error_when_setting_green_font_color_component_to_invalid_color_value
+    test_renderer = TestClasses::TestRenderer.new
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(green: -1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(green: 256) }
+  end
+
+  def test_that_renderer_set_font_color_raises_error_when_setting_blue_font_color_component_to_invalid_color_value
+    test_renderer = TestClasses::TestRenderer.new
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(blue: -1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(blue: 256) }
+  end
+
+  def test_that_renderer_set_font_color_raises_error_when_setting_alpha_font_color_component_to_invalid_color_value
+    test_renderer = TestClasses::TestRenderer.new
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(alpha: -1) }
+    assert_raises(AsciiPngfy::Exceptions::InvalidRGBAColorValueError) { test_renderer.set_font_color(alpha: 256) }
+  end
 end
+# rubocop:enable Metrics/ClassLength
