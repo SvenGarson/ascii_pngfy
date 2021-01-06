@@ -12,7 +12,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # Bundler is enforced programmatically
-  system('ruby test/exceptions/test_invalid_vertical_spacing_error.rb')
+  system('ruby test/test_renderer.rb')
 end
 
 desc('Run Rubocop on library')

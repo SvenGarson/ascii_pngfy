@@ -41,6 +41,12 @@ module AsciiPngfy
     end
     # rubocop:enable Naming/AccessorMethodName
 
+    # rubocop:disable Naming/AccessorMethodName
+    def set_horizontal_spacing(desired_horizontal_spacing)
+      settings.horizontal_spacing = validate_spacing(desired_horizontal_spacing)
+    end
+    # rubocop:enable Naming/AccessorMethodName
+
     private
 
     attr_accessor(:settings)
@@ -52,12 +58,12 @@ module AsciiPngfy
       color.alpha = alpha unless alpha.nil?
     end
 
-    def font_height_invalid?(font_height)
-      !font_height.is_a?(Integer) || (font_height < 9)
+    def font_height_valid?(font_height)
+      font_height.is_a?(Integer) && (font_height >= 9)
     end
 
     def validate_font_height(font_height)
-      return font_height unless font_height_invalid?(font_height)
+      return font_height if font_height_valid?(font_height)
 
       error_message = String.new
       error_message << "#{font_height} is not a valid font size. "
@@ -84,6 +90,20 @@ module AsciiPngfy
       elsif higher_bound_distance?(lower_bound_distance)
         ((validated_font_height / 9) + 1) * 9
       end
+    end
+
+    def spacing_valid?(spacing)
+      spacing.is_a?(Integer) && (0..).cover?(spacing)
+    end
+
+    def validate_spacing(spacing)
+      return spacing if spacing_valid?(spacing)
+
+      error_message = String.new
+      error_message << "#{spacing} is not a valid horizontal spacing. "
+      error_message << 'Must be an Integer in the range (0..).'
+
+      raise AsciiPngfy::Exceptions::InvalidHorizontalSpacingError, error_message
     end
   end
 end
