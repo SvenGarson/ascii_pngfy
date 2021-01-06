@@ -43,7 +43,11 @@ module AsciiPngfy
 
     # rubocop:disable Naming/AccessorMethodName
     def set_horizontal_spacing(desired_horizontal_spacing)
-      settings.horizontal_spacing = validate_spacing(desired_horizontal_spacing)
+      settings.horizontal_spacing = validate_horizontal_spacing(desired_horizontal_spacing)
+    end
+
+    def set_vertical_spacing(desired_vertical_spacing)
+      settings.vertical_spacing = validate_vertical_spacing(desired_vertical_spacing)
     end
     # rubocop:enable Naming/AccessorMethodName
 
@@ -96,7 +100,7 @@ module AsciiPngfy
       spacing.is_a?(Integer) && (0..).cover?(spacing)
     end
 
-    def validate_spacing(spacing)
+    def validate_horizontal_spacing(spacing)
       return spacing if spacing_valid?(spacing)
 
       error_message = String.new
@@ -104,6 +108,16 @@ module AsciiPngfy
       error_message << 'Must be an Integer in the range (0..).'
 
       raise AsciiPngfy::Exceptions::InvalidHorizontalSpacingError, error_message
+    end
+
+    def validate_vertical_spacing(spacing)
+      return spacing if spacing_valid?(spacing)
+
+      error_message = String.new
+      error_message << "#{spacing} is not a valid vertical spacing. "
+      error_message << 'Must be an Integer in the range (0..).'
+
+      raise AsciiPngfy::Exceptions::InvalidVerticalSpacingError, error_message
     end
   end
 end
