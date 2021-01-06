@@ -14,6 +14,6 @@ class TestInvalidRGBAColorValueError < Minitest::Test
     invalid_rgba_color_value_error = AsciiPngfy::Exceptions::InvalidRGBAColorValueError
     subclass_of_ascii_pngfy_error = (invalid_rgba_color_value_error < ascii_pngfy_error)
 
-    assert(true, subclass_of_ascii_pngfy_error)
+    assert(subclass_of_ascii_pngfy_error)
   end
 end

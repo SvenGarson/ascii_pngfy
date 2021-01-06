@@ -9,5 +9,7 @@ module AsciiPngfy
     class InvalidRGBAColorValueError < AsciiPngfyError; end
 
     class InvalidFontHeightError < AsciiPngfyError; end
+
+    class InvalidHorizontalSpacingError < AsciiPngfyError; end
   end
 end

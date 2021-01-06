@@ -12,7 +12,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # Bundler is enforced programmatically
-  # system('ruby test/test_color_rgba.rb')
+  system('ruby test/exceptions/test_invalid_horizontal_spacing_error.rb')
 end
 
 desc('Run Rubocop on library')

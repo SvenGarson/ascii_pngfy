@@ -12,6 +12,6 @@ class TestAsciiPngfyError < Minitest::Test
   def test_that_ascii_pngfy_error_is_subclass_of_standard_error
     subclass_of_standard_error = (AsciiPngfy::Exceptions::AsciiPngfyError < StandardError)
 
-    assert(true, subclass_of_standard_error)
+    assert(subclass_of_standard_error)
   end
 end
