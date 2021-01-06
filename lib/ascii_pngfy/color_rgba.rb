@@ -41,7 +41,10 @@ module AsciiPngfy
     def validate_color_value(color_value, color_component)
       return color_value if valid_color_value?(color_value)
 
-      error_message = "#{color_value} is not a valid #{color_component.to_s} color component value. Must be an Integer in the range (#{VALID_RGBA_COLOR_RANGE})."
+      error_message = String.new
+      error_message << "#{color_value} is not a valid #{color_component} color component value. "
+      error_message << "Must be an Integer in the range (#{VALID_RGBA_COLOR_RANGE})."
+
       raise Exceptions::InvalidRGBAColorValueError, error_message
     end
 

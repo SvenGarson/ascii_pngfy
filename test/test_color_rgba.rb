@@ -159,7 +159,7 @@ class TestColorRGBA < Minitest::Test
 
   def test_that_color_rgba_raises_error_with_helpful_message_when_setting_red_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
-    expected_error_message = "555 is not a valid red color component value. Must be an Integer in the range (0..255)."
+    expected_error_message = '555 is not a valid red color component value. Must be an Integer in the range (0..255).'
 
     # check that error is raised and that the error has the method using the assert_raises method
     # check docs when online
@@ -172,7 +172,7 @@ class TestColorRGBA < Minitest::Test
 
   def test_that_color_rgba_raises_error_with_helpful_message_when_setting_green_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
-    expected_error_message = "-18 is not a valid green color component value. Must be an Integer in the range (0..255)."
+    expected_error_message = '-18 is not a valid green color component value. Must be an Integer in the range (0..255).'
 
     # check that error is raised and that the error has the method using the assert_raises method
     # check docs when online
@@ -185,7 +185,7 @@ class TestColorRGBA < Minitest::Test
 
   def test_that_color_rgba_raises_error_with_helpful_message_when_setting_blue_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
-    expected_error_message = "1024 is not a valid blue color component value. Must be an Integer in the range (0..255)."
+    expected_error_message = '1024 is not a valid blue color component value. Must be an Integer in the range (0..255).'
 
     # check that error is raised and that the error has the method using the assert_raises method
     # check docs when online
@@ -198,12 +198,12 @@ class TestColorRGBA < Minitest::Test
 
   def test_that_color_rgba_raises_error_with_helpful_message_when_setting_alpha_component_to_invalid_color_value
     rgba = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
-    expected_error_message = "-255 is not a valid alpha color component value. Must be an Integer in the range (0..255)."
+    expected_error_message = '-49 is not a valid alpha color component value. Must be an Integer in the range (0..255).'
 
     # check that error is raised and that the error has the method using the assert_raises method
     # check docs when online
     begin
-      rgba.alpha = (-255)
+      rgba.alpha = (-49)
     rescue AsciiPngfy::Exceptions::InvalidRGBAColorValueError => e
       assert_equal(expected_error_message, e.message)
     end
