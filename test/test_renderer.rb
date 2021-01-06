@@ -377,7 +377,7 @@ class TestRenderer < Minitest::Test
     test_renderer = TestClasses::TestRenderer.new
     test_renderer_settings = test_renderer.test_settings
 
-    9.step((9*100), 9) do |multiple_of_nine|
+    9.step((9 * 100), 9) do |multiple_of_nine|
       test_renderer.set_font_height_closest_to(multiple_of_nine)
 
       assert_equal(multiple_of_nine, test_renderer_settings.font_height)
@@ -386,18 +386,18 @@ class TestRenderer < Minitest::Test
 
   def test_that_renderer_set_font_height_closest_to_returns_the_last_font_size_set_as_integer
     test_renderer = TestClasses::TestRenderer.new
-    
-    font_height_set = test_renderer.set_font_height_closest_to(9*3)
+
+    font_height_set = test_renderer.set_font_height_closest_to(9 * 3)
 
     assert_instance_of(Integer, font_height_set)
   end
 
   def test_that_renderer_set_font_height_closest_to_returns_the_last_font_size_set
     test_renderer = TestClasses::TestRenderer.new
-    
-    font_height_set = test_renderer.set_font_height_closest_to(9*5)
 
-    assert_equal(9*5, font_height_set)
+    font_height_set = test_renderer.set_font_height_closest_to(9 * 5)
+
+    assert_equal(9 * 5, font_height_set)
   end
 
   def test_that_renderer_set_font_height_closest_to_sets_font_height_to_the_lower_and_closer_multiple_of_nine
@@ -420,7 +420,7 @@ class TestRenderer < Minitest::Test
 
     test_renderer = TestClasses::TestRenderer.new
 
-    9.step((9*100), 9) do |multiple_of_nine|
+    9.step((9 * 100), 9) do |multiple_of_nine|
       # here we set the font height to all possible font heights closest to the lower bound
       # which is all:
       # multiples of 9 + 1
@@ -440,7 +440,7 @@ class TestRenderer < Minitest::Test
     # The same as the previous test with the difference that we now test for the higher bound
     test_renderer = TestClasses::TestRenderer.new
 
-    9.step((9*100), 9) do |multiple_of_nine|
+    9.step((9 * 100), 9) do |multiple_of_nine|
       next_multiple_of_nine = multiple_of_nine + 9
       # here we set the font height to all possible font heights closest to the higher bound
       # which is all:
@@ -459,12 +459,13 @@ class TestRenderer < Minitest::Test
 
   def test_that_renderer_set_font_height_closest_to_raises_error_with_helpful_message_when_argument_invalid
     test_renderer = TestClasses::TestRenderer.new
+    expected_error_message = '-55 is not a valid font size. Must be an Integer in the range (9..).'
 
     error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidFontHeightError) do
       test_renderer.set_font_height_closest_to(-55)
     end
 
-    assert_equal(error_raised.message, '-55 is not a valid font size. Must be an Integer in the range (9..).')
+    assert_equal(expected_error_message, error_raised.message)
   end
 end
 # rubocop:enable Metrics/ClassLength

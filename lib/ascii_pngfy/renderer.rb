@@ -25,31 +25,21 @@ module AsciiPngfy
       current_background_color.dup
     end
 
+    # rubocop:disable Naming/AccessorMethodName
     def set_font_height_closest_to(desired_font_height)
-      unless desired_font_height.is_a?(Integer) && desired_font_height >= 9
-        error_message = String.new
-        error_message << "#{desired_font_height} is not a valid font size. "
-        error_message << "Must be an Integer in the range (9..)."
-        raise AsciiPngfy::Exceptions::InvalidFontHeightError, error_message
-      end
+      validated_font_height = validate_font_height(desired_font_height)
 
-      if (desired_font_height % 9) == 0
-        settings.font_height = desired_font_height
-      else
-        # determine bound - the desired one is not multiple of 9
-        multiple_of_nine_remainder = (desired_font_height % 9)
-        if [1, 2, 3, 4].include?(multiple_of_nine_remainder)
-          # lower bound
-          settings.font_height = (desired_font_height / 9) * 9
-        elsif [5, 6, 7, 8].include?(multiple_of_nine_remainder)
-          # upper bound
-          settings.font_height = ((desired_font_height / 9) + 1) * 9
+      new_font_height =
+        if multiple_of_9?(validated_font_height)
+          validated_font_height
+        else
+          lower_bound_distance = (validated_font_height % 9)
+          determine_bound_font_height(validated_font_height, lower_bound_distance)
         end
-      end
 
-      # return currently set - unless error is raised
-      settings.font_height
+      settings.font_height = new_font_height
     end
+    # rubocop:enable Naming/AccessorMethodName
 
     private
 
@@ -60,6 +50,40 @@ module AsciiPngfy
       color.green = green unless green.nil?
       color.blue = blue unless blue.nil?
       color.alpha = alpha unless alpha.nil?
+    end
+
+    def font_height_invalid?(font_height)
+      !font_height.is_a?(Integer) || (font_height < 9)
+    end
+
+    def validate_font_height(font_height)
+      return font_height unless font_height_invalid?(font_height)
+
+      error_message = String.new
+      error_message << "#{font_height} is not a valid font size. "
+      error_message << 'Must be an Integer in the range (9..).'
+
+      raise AsciiPngfy::Exceptions::InvalidFontHeightError, error_message
+    end
+
+    def multiple_of_9?(number)
+      (number % 9).zero?
+    end
+
+    def lower_bound_distance?(distance)
+      [1, 2, 3, 4].include?(distance)
+    end
+
+    def higher_bound_distance?(distance)
+      [5, 6, 7, 8].include?(distance)
+    end
+
+    def determine_bound_font_height(validated_font_height, lower_bound_distance)
+      if lower_bound_distance?(lower_bound_distance)
+        (validated_font_height / 9) * 9
+      elsif higher_bound_distance?(lower_bound_distance)
+        ((validated_font_height / 9) + 1) * 9
+      end
     end
   end
 end
