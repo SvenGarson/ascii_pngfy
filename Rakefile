@@ -12,7 +12,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # Bundler is enforced programmatically
-  puts 'No current test file defined, what are you working on right now?'
+  system('ruby test/test_color_rgba.rb')
 end
 
 desc('Run Rubocop on library')

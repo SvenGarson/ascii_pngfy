@@ -14,19 +14,19 @@ module AsciiPngfy
     end
 
     def red=(new_red)
-      @red = validate_color_value(new_red)
+      @red = validate_color_value(new_red, :red)
     end
 
     def green=(new_green)
-      @green = validate_color_value(new_green)
+      @green = validate_color_value(new_green, :green)
     end
 
     def blue=(new_blue)
-      @blue = validate_color_value(new_blue)
+      @blue = validate_color_value(new_blue, :blue)
     end
 
     def alpha=(new_alpha)
-      @alpha = validate_color_value(new_alpha)
+      @alpha = validate_color_value(new_alpha, :alpha)
     end
 
     def ==(other)
@@ -38,10 +38,11 @@ module AsciiPngfy
 
     private
 
-    def validate_color_value(color_value)
+    def validate_color_value(color_value, color_component)
       return color_value if valid_color_value?(color_value)
 
-      raise Exceptions::InvalidRGBAColorValueError, color_value
+      error_message = "#{color_value} is not a valid #{color_component.to_s} color component value. Must be an Integer in the range (#{VALID_RGBA_COLOR_RANGE})."
+      raise Exceptions::InvalidRGBAColorValueError, error_message
     end
 
     def valid_color_value?(color_value)
