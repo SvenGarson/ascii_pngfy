@@ -7,5 +7,7 @@ module AsciiPngfy
     class AsciiPngfyError < StandardError; end
 
     class InvalidRGBAColorValueError < AsciiPngfyError; end
+
+    class InvalidFontHeightError < AsciiPngfyError; end
   end
 end

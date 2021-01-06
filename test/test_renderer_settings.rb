@@ -37,12 +37,12 @@ class TestRendererSettings < Minitest::Test
     assert_equal(255, default_background_color.alpha, 'Alpha component should be 255 for opaque')
   end
 
-  def test_that_renderer_settings_initializes_default_font_size_to_nine
+  def test_that_renderer_settings_initializes_default_font_height_to_nine
     renderer_settings = AsciiPngfy::RendererSettings.new
 
-    default_font_size = renderer_settings.font_size
+    default_font_height = renderer_settings.font_height
 
-    assert_equal(9, default_font_size)
+    assert_equal(9, default_font_height)
   end
 
   def test_that_renderer_settings_initializes_default_horizontal_spacing_to_one
@@ -77,12 +77,12 @@ class TestRendererSettings < Minitest::Test
     assert_equal(AsciiPngfy::ColorRGBA.new(125, 25, 75, 225), renderer_settings.background_color)
   end
 
-  def test_that_renderer_settings_font_size_can_be_set
+  def test_that_renderer_settings_font_height_can_be_set
     renderer_settings = AsciiPngfy::RendererSettings.new
 
-    renderer_settings.font_size = 79
+    renderer_settings.font_height = 79
 
-    assert_equal(79, renderer_settings.font_size)
+    assert_equal(79, renderer_settings.font_height)
   end
 
   def test_that_renderer_settings_horizontal_spacing_can_be_set
