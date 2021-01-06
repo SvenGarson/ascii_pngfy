@@ -12,7 +12,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # Bundler is enforced programmatically
-  system('ruby test/test_renderer.rb')
+  system('ruby test/test_color_rgba.rb')
 end
 
 desc('Run Rubocop on library')
