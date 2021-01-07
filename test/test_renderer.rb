@@ -577,5 +577,14 @@ class TestRenderer < Minitest::Test
 
     assert_equal(expected_error_message, error_raised.message)
   end
+
+  def test_that_renderer_pngfy_raises_invalid_replacement_text_error_when_replacement_text_contains_unsupported_chars
+    test_renderer = TestClasses::TestRenderer.new
+    unsupported_ascii_character = 7.chr
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
+      test_renderer.pngfy('', unsupported_ascii_character)
+    end
+  end
 end
 # rubocop:enable Metrics/ClassLength

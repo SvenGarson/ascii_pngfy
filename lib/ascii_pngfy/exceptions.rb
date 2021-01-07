@@ -15,5 +15,7 @@ module AsciiPngfy
     class InvalidHorizontalSpacingError < InvalidSpacingError; end
 
     class InvalidVerticalSpacingError < InvalidSpacingError; end
+
+    class InvalidReplacementTextError < AsciiPngfyError; end
   end
 end

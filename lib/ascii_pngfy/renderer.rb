@@ -39,9 +39,7 @@ module AsciiPngfy
 
       settings.font_height = new_font_height
     end
-    # rubocop:enable Naming/AccessorMethodName
 
-    # rubocop:disable Naming/AccessorMethodName
     def set_horizontal_spacing(desired_horizontal_spacing)
       settings.horizontal_spacing = validate_horizontal_spacing(desired_horizontal_spacing)
     end
@@ -50,6 +48,15 @@ module AsciiPngfy
       settings.vertical_spacing = validate_vertical_spacing(desired_vertical_spacing)
     end
     # rubocop:enable Naming/AccessorMethodName
+
+    def pngfy(text, replacement_text = nil)
+      # guard against replacement text that contains unsupported characters
+      unless contains_only_supported_ascii_characters?(replacement_text)
+        raise AsciiPngfy::Exceptions::InvalidReplacementTextError
+      end
+
+      text
+    end
 
     private
 
@@ -119,5 +126,16 @@ module AsciiPngfy
 
       raise AsciiPngfy::Exceptions::InvalidVerticalSpacingError, error_message
     end
+
+    def contains_only_supported_ascii_characters?(string)
+      supported_ascii_characters_string = ([10] + (32..126).to_a).map(&:chr).join
+
+      # early out when a non supported character is found
+      string.each_char do |string_character|
+        return false unless supported_ascii_characters_string.include?(string_character)
+      end
+    end
+
+    true
   end
 end
