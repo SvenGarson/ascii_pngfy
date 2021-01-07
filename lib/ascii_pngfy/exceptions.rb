@@ -10,8 +10,10 @@ module AsciiPngfy
 
     class InvalidFontHeightError < AsciiPngfyError; end
 
-    class InvalidHorizontalSpacingError < AsciiPngfyError; end
+    class InvalidSpacingError < AsciiPngfyError; end
 
-    class InvalidVerticalSpacingError < AsciiPngfyError; end
+    class InvalidHorizontalSpacingError < InvalidSpacingError; end
+
+    class InvalidVerticalSpacingError < InvalidSpacingError; end
   end
 end

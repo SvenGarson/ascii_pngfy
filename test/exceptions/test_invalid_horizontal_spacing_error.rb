@@ -9,11 +9,11 @@ class TestInvalidHorizontalSpacingError < Minitest::Test
     refute_nil(invalid_horizontal_spacing_error_defined)
   end
 
-  def test_that_invalid_horizontal_spacing_error_is_subclass_of_ascii_pngfy_error
-    ascii_pngfy_error = AsciiPngfy::Exceptions::AsciiPngfyError
+  def test_that_invalid_horizontal_spacing_error_is_subclass_of_invalid_spacing_error
+    invalid_spacing_error = AsciiPngfy::Exceptions::InvalidSpacingError
     invalid_horizontal_spacing_error = AsciiPngfy::Exceptions::InvalidHorizontalSpacingError
-    subclass_of_ascii_pngfy_error = (invalid_horizontal_spacing_error < ascii_pngfy_error)
+    subclass_of_invalid_spacing_error = (invalid_horizontal_spacing_error < invalid_spacing_error)
 
-    assert(subclass_of_ascii_pngfy_error)
+    assert(subclass_of_invalid_spacing_error)
   end
 end
