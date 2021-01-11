@@ -148,8 +148,4 @@ class TestPngfyer < Minitest::Test
       test_pngfyer.set_font_color(alpha: 256)
     end
   end
-
-  # more tests for other classes
-  # - test that set_ are supported when supported setting appended
-  # - test that undefined method raises for non supported method
 end
