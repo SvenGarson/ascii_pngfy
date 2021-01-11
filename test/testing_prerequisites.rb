@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/ascii_pngfy'
+require 'ascii_pngfy'
 
 require 'rubygems'
 require 'bundler'

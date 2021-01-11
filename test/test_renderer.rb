@@ -586,5 +586,21 @@ class TestRenderer < Minitest::Test
       test_renderer.pngfy('', unsupported_ascii_character)
     end
   end
+
+  def test_that_renderer_pngfy_raises_invalid_replacement_text_error_with_helpful_message_when_chars_unsupported
+    test_renderer = TestClasses::TestRenderer.new
+    unsupported_characters_string = "A#{1.chr}#{2.chr}#{3.chr}?"
+
+    expected_error_message = "#{unsupported_characters_string.inspect} is not a valid replacement string because "\
+                             "[#{1.chr.inspect}, #{2.chr.inspect} and #{3.chr.inspect}] "\
+                             'are not supported ASCII characters. '\
+                             'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
+      test_renderer.pngfy('', unsupported_characters_string)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
 end
 # rubocop:enable Metrics/ClassLength
