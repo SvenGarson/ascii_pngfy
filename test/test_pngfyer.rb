@@ -6,7 +6,7 @@ class TestPngfyer < Minitest::Test
   module TestClasses
     class TestPngfyer < AsciiPngfy::Pngfyer
       def test_settings
-        @settings
+        settings
       end
     end
   end
