@@ -11,6 +11,10 @@ module AsciiPngfy
       self.settings = Settings::SetableGetableSettings.new
     end
 
+    def respond_to_missing?(method_name, *)
+      settings_call?(method_name) || super
+    end
+
     def method_missing(method_name, *arguments)
       # forward only set_* calls to the settings so that the
       # respective setting can enforce it's interface
@@ -25,7 +29,7 @@ module AsciiPngfy
     private
 
     attr_accessor(:settings)
-    
+
     def settings_call?(method_name)
       method_name.start_with?('set_')
     end

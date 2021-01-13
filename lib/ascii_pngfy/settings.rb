@@ -3,7 +3,10 @@
 module AsciiPngfy
   # Namespace that that contains Setting(s) related functionality
   module Settings
-
+    # Reponsibilities
+    #   - Provides #set argument signature when setting, this setting
+    #   - Keeps track of color as setting
+    #   - Validated through ColorRGBA implicitly
     class ColorSetting
       def initialize(red, green, blue, alpha)
         @color = ColorRGBA.new(red, green, blue, alpha)
@@ -48,19 +51,24 @@ module AsciiPngfy
         }
       end
 
+      def respond_to_missing?(method_name, *)
+        setting_operation = determine_operation(method_name)
+        operation_supported = operation_supported?(setting_operation)
+
+        setting_name = determine_setting_name_as_symbol(method_name)
+        setting_exists = setting_exists?(setting_name)
+
+        (operation_supported && setting_exists) || super
+      end
+
       def method_missing(method_name, *arguments)
-        setting_operation = setter?(method_name) ? SET : GET
+        super unless respond_to?(method_name)
 
-        unless operation_supported?(setting_operation)
-          raise StandardError, "#{setting_operation} not supported!"
-        end
+        # respond_to? determines wether the operation is supported and
+        # the setting exists
+        setting_operation = determine_operation(method_name)
+        setting_name = determine_setting_name_as_symbol(method_name)
 
-        setting_name = extract_setting_name_as_symbol(method_name)
-        unless setting_exists?(setting_name)
-          raise StandardError, "#{setting_name} is not registered as setting!"
-        end
-
-        # use the action on the approproate setting
         setting(setting_name).public_send(setting_operation, *arguments)
       end
 
@@ -71,7 +79,7 @@ module AsciiPngfy
       end
 
       def setting_exists?(setting_name)
-        settings.has_key?(setting_name)
+        settings.key?(setting_name)
       end
 
       def operation_supported?(operation)
@@ -82,13 +90,13 @@ module AsciiPngfy
         method_name.start_with?('set_')
       end
 
-      def getter?(method_name)
-        !setter?(metWhod_name)
+      def determine_operation(method_name)
+        setter?(method_name) ? SET : GET
       end
 
-      def extract_setting_name_as_symbol(method_name)
+      def determine_setting_name_as_symbol(method_name)
         if setter?(method_name)
-          method_name[4..-1]
+          method_name[4..]
         else
           method_name
         end.to_sym
@@ -97,6 +105,8 @@ module AsciiPngfy
       attr_accessor(:supported_operations, :settings)
     end
 
+    # Reponsibilities
+    #   - Configures settings instance to support both setter and getter
     class SetableGetableSettings < ConfigurableSettings
       def initialize
         super(setable: true, getable: true)
