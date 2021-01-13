@@ -5,7 +5,7 @@ module AsciiPngfy
   #   - Provide the complete interface of this gem
   #   - References settings and pipe user setting calls
   #     to the appropriate setting if the are defined
-  #   - Initializes the settings to be used for this gem
+  #   - Provide the settings to be used for this gem
   class Pngfyer
     def initialize
       self.settings = Settings::SetableGetableSettings.new

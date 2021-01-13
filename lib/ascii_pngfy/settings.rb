@@ -29,12 +29,7 @@ module AsciiPngfy
     # Reponsibilities
     #   - Pipe setter and getter calls to a specific Setting implementation
     #   - Defines wether the settings can be set and/or retreived(get) externally
-    #   - Register settings based on settings defined externally througj a builder
-    #   > Raise errors that inform about wether:
-    #       - setting exists
-    #       - setting has been fully implemented
-    #       - get and set operations are supported operations on the defined settings
-    #       - the added settings support the required set/get interface
+    #   - Register settings based on settings defined externally through a builder
     class ConfigurableSettings
       GET = :get
       SET = :set
@@ -47,7 +42,8 @@ module AsciiPngfy
 
         # use builder somehow
         self.settings = {
-          font_color: ColorSetting.new(255, 255, 255, 255)
+          font_color: ColorSetting.new(255, 255, 255, 255),
+          background_color: ColorSetting.new(255, 255, 255, 255)
         }
       end
 
@@ -73,6 +69,8 @@ module AsciiPngfy
       end
 
       private
+
+      attr_accessor(:supported_operations, :settings)
 
       def setting(setting_name)
         settings[setting_name]
@@ -101,8 +99,6 @@ module AsciiPngfy
           method_name
         end.to_sym
       end
-
-      attr_accessor(:supported_operations, :settings)
     end
 
     # Reponsibilities
