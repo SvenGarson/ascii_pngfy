@@ -132,26 +132,53 @@ module AsciiPngfy
     end
 
     # Reponsibilities
+    #   - Keeps track of the the vertical_spacing setting
+    #   - Validates vertical_spacing
+    class VerticalSpacingSetting
+      def initialize(initial_spacing)
+        self.vertical_spacing = initial_spacing
+      end
+
+      def get
+        vertical_spacing
+      end
+
+      def set(desired_spacing)
+        validated_vertical_spacing = validate_vertical_spacing(desired_spacing)
+
+        self.vertical_spacing = validated_vertical_spacing
+      end
+
+      private
+
+      attr_accessor(:vertical_spacing)
+
+      def vertical_spacing_valid?(some_spacing)
+        some_spacing.is_a?(Integer) && (some_spacing >= 0)
+      end
+
+      def validate_vertical_spacing(some_spacing)
+        return some_spacing if vertical_spacing_valid?(some_spacing)
+
+        error_message = String.new
+        error_message << "#{some_spacing} is not a valid vertical spacing. "
+        error_message << 'Must be an Integer in the range (0..).'
+
+        raise AsciiPngfy::Exceptions::InvalidVerticalSpacingError, error_message
+      end
+    end
+
+    # Reponsibilities
     #   - Pipe setter and getter calls to a specific Setting implementation
     #   - Defines wether the settings can be set and/or retreived(get) externally
-    #   - Register settings based on settings defined externally through a builder
+    #   - Register supported settings and what name to associate each setting to
     class ConfigurableSettings
       GET = :get
       SET = :set
 
       def initialize(setable: false, getable: true)
-        self.supported_operations = {
-          SET => setable,
-          GET => getable
-        }
-
-        # use builder somehow
-        self.settings = {
-          font_color: ColorSetting.new(255, 255, 255, 255),
-          background_color: ColorSetting.new(255, 255, 255, 255),
-          font_height: FontHeightSetting.new(9),
-          horizontal_spacing: HorizontalSpacingSetting.new(0)
-        }
+        initialize_supported_operations(setable, getable)
+        initialize_supported_settings
       end
 
       def respond_to_missing?(method_name, *)
@@ -178,6 +205,23 @@ module AsciiPngfy
       private
 
       attr_accessor(:supported_operations, :settings)
+
+      def initialize_supported_operations(setable, getable)
+        self.supported_operations = {
+          SET => setable,
+          GET => getable
+        }
+      end
+
+      def initialize_supported_settings
+        self.settings = {
+          font_color: ColorSetting.new(255, 255, 255, 255),
+          background_color: ColorSetting.new(255, 255, 255, 255),
+          font_height: FontHeightSetting.new(9),
+          horizontal_spacing: HorizontalSpacingSetting.new(0),
+          vertical_spacing: VerticalSpacingSetting.new(0)
+        }
+      end
 
       def setting(setting_name)
         settings[setting_name]
@@ -209,7 +253,7 @@ module AsciiPngfy
     end
 
     # Reponsibilities
-    #   - Configures settings instance to support both setter and getter
+    #   - Configures settings instance to support both setting and getting the setting
     class SetableGetableSettings < ConfigurableSettings
       def initialize
         super(setable: true, getable: true)
