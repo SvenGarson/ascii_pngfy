@@ -11,61 +11,6 @@ class TestRenderer < Minitest::Test
     end
   end
 
-  def test_that_renderer_set_horizontal_spacing_raises_error_when_argument_is_not_an_integer
-    test_renderer = TestClasses::TestRenderer.new
-
-    assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
-      test_renderer.set_horizontal_spacing(2.8)
-    end
-  end
-
-  def test_that_renderer_set_horizontal_spacing_raises_error_when_argument_is_negative
-    test_renderer = TestClasses::TestRenderer.new
-
-    assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
-      test_renderer.set_horizontal_spacing(-2)
-    end
-  end
-
-  def test_that_renderer_set_horizontal_spacing_sets_horizontal_spacing_to_argument_when_non_negative
-    test_renderer = TestClasses::TestRenderer.new
-    test_renderer_settings = test_renderer.test_settings
-
-    10.times do |_|
-      random_non_zero_spacing = rand(0..100)
-      test_renderer.set_horizontal_spacing(random_non_zero_spacing)
-
-      assert_equal(random_non_zero_spacing, test_renderer_settings.horizontal_spacing)
-    end
-  end
-
-  def test_that_renderer_set_horizontal_spacing_returns_the_last_horizontal_spacing_set_as_integer
-    test_renderer = TestClasses::TestRenderer.new
-
-    horizontal_spacing_set = test_renderer.set_horizontal_spacing(7)
-
-    assert_instance_of(Integer, horizontal_spacing_set)
-  end
-
-  def test_that_renderer_set_horizontal_spacing_returns_the_last_horizontal_spacing_set
-    test_renderer = TestClasses::TestRenderer.new
-
-    horizontal_spacing_set = test_renderer.set_horizontal_spacing(11)
-
-    assert_equal(11, horizontal_spacing_set)
-  end
-
-  def test_that_renderer_set_horizontal_spacing_raises_error_with_helpful_message_when_argument_invalid
-    test_renderer = TestClasses::TestRenderer.new
-    expected_error_message = '-3 is not a valid horizontal spacing. Must be an Integer in the range (0..).'
-
-    error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
-      test_renderer.set_horizontal_spacing(-3)
-    end
-
-    assert_equal(expected_error_message, error_raised.message)
-  end
-
   def test_that_renderer_set_vertical_spacing_raises_error_when_argument_is_not_an_integer
     test_renderer = TestClasses::TestRenderer.new
 

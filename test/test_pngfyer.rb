@@ -370,5 +370,49 @@ class TestPngfyer < Minitest::Test
 
     assert_equal(expected_error_message, error_raised.message)
   end
+
+  def test_that_pngfyer_set_horizontal_spacing_raises_error_when_argument_is_not_an_integer
+    assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
+      test_pngfyer.set_horizontal_spacing(2.8)
+    end
+  end
+
+  def test_that_pngfyer_set_horizontal_spacing_raises_error_when_argument_is_negative
+    assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
+      test_pngfyer.set_horizontal_spacing(-2)
+    end
+  end
+
+  def test_that_pngfyer_set_horizontal_spacing_sets_horizontal_spacing_to_argument_when_non_negative
+    10.times do |_|
+      random_non_zero_spacing = rand(0..100)
+
+      test_pngfyer.set_horizontal_spacing(random_non_zero_spacing)
+
+      assert_equal(random_non_zero_spacing, test_pngfyer_settings.horizontal_spacing)
+    end
+  end
+
+  def test_that_pngfyer_set_horizontal_spacing_returns_the_last_horizontal_spacing_set_as_integer
+    horizontal_spacing_set = test_pngfyer.set_horizontal_spacing(7)
+
+    assert_instance_of(Integer, horizontal_spacing_set)
+  end
+
+  def test_that_pngfyer_set_horizontal_spacing_returns_the_last_horizontal_spacing_set
+    horizontal_spacing_set = test_pngfyer.set_horizontal_spacing(11)
+
+    assert_equal(11, horizontal_spacing_set)
+  end
+
+  def test_that_pngfyer_set_horizontal_spacing_raises_error_with_helpful_message_when_argument_invalid
+    expected_error_message = '-3 is not a valid horizontal spacing. Must be an Integer in the range (0..).'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidHorizontalSpacingError) do
+      test_pngfyer.set_horizontal_spacing(-3)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
 end
 # rubocop:enable Metrics/ClassLength
