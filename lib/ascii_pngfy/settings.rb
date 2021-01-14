@@ -169,6 +169,47 @@ module AsciiPngfy
     end
 
     # Reponsibilities
+    #   - Keeps track of the text and replacement_text setting
+    #   - Validates text and replacement_text
+    class TextSetting
+      SUPPORTED_ASCII_CODES = [10] + (32..126).to_a
+
+      def initialize
+        @text = String.new
+      end
+
+      def set(desired_text, desired_replacement_text = nil)
+        supported_ascii_codes = [10] + (32..126).to_a
+        replacement_text_defined = desired_replacement_text.nil? ? false : true
+
+        # consider replacement only when non-nil
+        if desired_replacement_text
+          desired_replacement_text = validate_text(desired_replacement_text)
+        end
+
+        @text = desired_text
+      end
+
+      private
+
+      def character_supported?(some_character)
+        SUPPORTED_ASCII_CODES.include?(some_character.ord)
+      end
+
+      def string_supported?(some_string)
+        some_string.chars.all? do |some_char|
+          character_supported?(some_char)
+        end
+      end
+
+      def validate_text(some_text)
+        return some_text if string_supported?(some_text)
+
+        raise AsciiPngfy::Exceptions::InvalidReplacementTextError
+      end
+    end
+
+    # Reponsibilities
     #   - Pipe setter and getter calls to a specific Setting implementation
     #   - Defines wether the settings can be set and/or retreived(get) externally
     #   - Register supported settings and what name to associate each setting to
@@ -219,7 +260,8 @@ module AsciiPngfy
           background_color: ColorSetting.new(255, 255, 255, 255),
           font_height: FontHeightSetting.new(9),
           horizontal_spacing: HorizontalSpacingSetting.new(0),
-          vertical_spacing: VerticalSpacingSetting.new(0)
+          vertical_spacing: VerticalSpacingSetting.new(0),
+          text: TextSetting.new
         }
       end
 

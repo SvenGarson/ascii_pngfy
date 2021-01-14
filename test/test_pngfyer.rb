@@ -12,11 +12,20 @@ class TestPngfyer < Minitest::Test
     end
   end
 
-  attr_reader(:test_pngfyer, :test_pngfyer_settings)
+  attr_reader(
+    :test_pngfyer,
+    :test_pngfyer_settings, 
+    :all_ascii_codes,
+    :supported_ascii_codes,
+    :un_supported_ascii_codes
+    )
 
   def setup
     @test_pngfyer = TestClasses::TestPngfyer.new
     @test_pngfyer_settings = test_pngfyer.test_settings
+    @all_ascii_codes = (0..255).to_a
+    @supported_ascii_codes = [10] + (32..126).to_a
+    @un_supported_ascii_codes = all_ascii_codes - supported_ascii_codes
   end
 
   def test_that_pngfyer_is_defined
@@ -458,5 +467,67 @@ class TestPngfyer < Minitest::Test
 
     assert_equal(expected_error_message, error_raised.message)
   end
+
+  def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_when_replacement_text_contains_unsupported_chars
+    un_supported_ascii_codes.each do |un_supported_code|
+      un_supported_character = un_supported_code.chr
+
+      assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do 
+        test_pngfyer.set_text('', un_supported_character)
+      end
+    end
+  end
+
+  def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_with_helpful_message_when_chars_unsupported
+skip
+=begin
+  
+  error message should desribe ALL unsupported characters for the user to see so he does not have to
+  fiddle until all problems are gone
+
+  >tests to execute
+    - use ALL unsupported characters to test that all work in error as expected
+    - use a combination of single and multiple char strings that are not supported
+
+  > approach
+    - build a local array of unsupported chars to use
+    - use up unuspported chars from that array and add it to a random string
+      by prepending/appending or interpolating the unsupported chars
+      and maybe even inject them at a random spot for each character?
+
+      This seems a og of logic and maybe need its own test?
+
+=end
+
+    un_supported_ascii_codes.each do |un_supported_code|
+      un_supported_character = un_supported_code.chr
+
+      error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do 
+        test_pngfyer.set_text('', un_supported_character)
+      end
+
+      expected_error_message = "#{unsupported_characters_string.inspect} is not a valid replacement string because "\
+                             "[#{1.chr.inspect}, #{2.chr.inspect} and #{3.chr.inspect}] "\
+                             'are not supported ASCII characters. '\
+                             'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+      assert_equal(expected_error_message, error_raised)
+    end
+
+skip
+    expected_error_message = "#{unsupported_characters_string.inspect} is not a valid replacement string because "\
+                             "[#{1.chr.inspect}, #{2.chr.inspect} and #{3.chr.inspect}] "\
+                             'are not supported ASCII characters. '\
+                             'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
+      test_renderer.pngfy('', unsupported_characters_string)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+
+  # other 
+
 end
 # rubocop:enable Metrics/ClassLength
