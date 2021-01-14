@@ -172,20 +172,19 @@ module AsciiPngfy
     #   - Keeps track of the text and replacement_text setting
     #   - Validates text and replacement_text
     class TextSetting
-      SUPPORTED_ASCII_CODES = [10] + (32..126).to_a
+      SUPPORTED_ASCII_CODES = [10] + (32..126).to_a.freeze
+      SUPPORTED_ASCII_CHARACTERS = SUPPORTED_ASCII_CODES.map(&:chr).freeze
 
       def initialize
         @text = String.new
       end
 
       def set(desired_text, desired_replacement_text = nil)
-        supported_ascii_codes = [10] + (32..126).to_a
-        replacement_text_defined = desired_replacement_text.nil? ? false : true
-
         # consider replacement only when non-nil
-        if desired_replacement_text
-          desired_replacement_text = validate_text(desired_replacement_text)
-        end
+        desired_replacement_text = validate_text(desired_replacement_text) if desired_replacement_text
+
+        # temporarily use variable to please rubocop
+        @desired_replacement_text = desired_replacement_text
 
         @text = desired_text
       end
@@ -193,7 +192,7 @@ module AsciiPngfy
       private
 
       def character_supported?(some_character)
-        SUPPORTED_ASCII_CODES.include?(some_character.ord)
+        SUPPORTED_ASCII_CHARACTERS.include?(some_character)
       end
 
       def string_supported?(some_string)
@@ -205,7 +204,10 @@ module AsciiPngfy
       def validate_text(some_text)
         return some_text if string_supported?(some_text)
 
-        raise AsciiPngfy::Exceptions::InvalidReplacementTextError
+        error_message = "#{some_text.inspect} is not a valid replacement string. "\
+                        'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+        raise AsciiPngfy::Exceptions::InvalidReplacementTextError, error_message
       end
     end
 
