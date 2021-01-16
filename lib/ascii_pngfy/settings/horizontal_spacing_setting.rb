@@ -6,6 +6,8 @@ module AsciiPngfy
     #   - Keeps track of the the horizontal_spacing setting
     #   - Validates horizontal_spacing
     class HorizontalSpacingSetting
+      include SetableGetable
+      
       def initialize(initial_spacing)
         self.horizontal_spacing = initial_spacing
       end

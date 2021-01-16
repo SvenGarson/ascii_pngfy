@@ -6,6 +6,8 @@ module AsciiPngfy
     #   - Keeps track of the the vertical_spacing setting
     #   - Validates vertical_spacing
     class VerticalSpacingSetting
+      include SetableGetable
+      
       def initialize(initial_spacing)
         self.vertical_spacing = initial_spacing
       end

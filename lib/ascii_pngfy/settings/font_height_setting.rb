@@ -6,6 +6,8 @@ module AsciiPngfy
     #   - Keeps track of the the font_height setting
     #   - Validates font_height
     class FontHeightSetting
+      include SetableGetable
+      
       def initialize(initial_font_height)
         self.font_height = initial_font_height
       end

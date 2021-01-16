@@ -6,6 +6,8 @@ module AsciiPngfy
     #   - Keeps track of the color setting(s)
     #   - Validated through ColorRGBA implicitly
     class ColorSetting
+      include SetableGetable
+      
       def initialize(initial_red, initial_green, initial_blue, initial_alpha)
         self.color = ColorRGBA.new(initial_red, initial_green, initial_blue, initial_alpha)
       end
