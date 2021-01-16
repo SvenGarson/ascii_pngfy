@@ -99,7 +99,11 @@ class TestPngfyer < Minitest::Test
     # we want to make sure that the returned ColorRGBA instance cannot be used to change
     # the internal state of the settings
     initial_font_color = test_pngfyer.set_font_color
-    initial_font_color.red -= 15
+    initial_red_color_value = initial_font_color.red
+
+    different_red_color_value = (initial_red_color_value - 15)
+
+    initial_font_color.red = different_red_color_value
     current_font_color = test_pngfyer.set_font_color
 
     # we want the returned, current color to not reflect the changes made through the returned objects
@@ -214,10 +218,14 @@ class TestPngfyer < Minitest::Test
     # we want to make sure that the returned ColorRGBA instance cannot be used to change
     # the internal state of the settings
     initial_background_color = test_pngfyer.set_background_color
-    initial_background_color.red -= 15
+    initial_red_color_value = initial_background_color.red
+
+    different_red_color_value = (initial_red_color_value + 15)
+
+    initial_background_color.red = different_red_color_value
     current_background_color = test_pngfyer.set_background_color
 
-    # we want the returned, current color to not reflect the changes made to the previously returned objects
+    # we want the returned, current color to not reflect the changes made through the returned objects
     refute_equal(current_background_color, initial_background_color)
   end
 

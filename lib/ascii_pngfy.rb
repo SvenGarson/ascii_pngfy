@@ -7,7 +7,6 @@ Bundler.require(:default)
 require 'ascii_pngfy/pngfyer'
 require 'ascii_pngfy/settings'
 require 'ascii_pngfy/renderer'
-require 'ascii_pngfy/renderer_settings'
 require 'ascii_pngfy/color_rgba'
 require 'ascii_pngfy/exceptions'
 

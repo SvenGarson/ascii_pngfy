@@ -176,7 +176,11 @@ module AsciiPngfy
       SUPPORTED_ASCII_CHARACTERS = SUPPORTED_ASCII_CODES.map(&:chr).freeze
 
       def initialize
-        @text = String.new
+        self.text = String.new
+      end
+
+      def get
+        text
       end
 
       def set(desired_text, desired_replacement_text = nil)
@@ -186,10 +190,12 @@ module AsciiPngfy
         # temporarily use variable to please rubocop
         @desired_replacement_text = desired_replacement_text
 
-        @text = desired_text
+        self.text = desired_text
       end
 
       private
+
+      attr_accessor(:text)
 
       def character_supported?(some_character)
         SUPPORTED_ASCII_CHARACTERS.include?(some_character)
@@ -259,10 +265,10 @@ module AsciiPngfy
       def initialize_supported_settings
         self.settings = {
           font_color: ColorSetting.new(255, 255, 255, 255),
-          background_color: ColorSetting.new(255, 255, 255, 255),
+          background_color: ColorSetting.new(0, 0, 0, 255),
           font_height: FontHeightSetting.new(9),
-          horizontal_spacing: HorizontalSpacingSetting.new(0),
-          vertical_spacing: VerticalSpacingSetting.new(0),
+          horizontal_spacing: HorizontalSpacingSetting.new(1),
+          vertical_spacing: VerticalSpacingSetting.new(1),
           text: TextSetting.new
         }
       end
