@@ -7,7 +7,7 @@ module AsciiPngfy
     #   - Validates text and replacement_text
     class TextSetting
       include SetableGetable
-      
+
       SUPPORTED_ASCII_CODES = [10] + (32..126).to_a.freeze
       SUPPORTED_ASCII_CHARACTERS = SUPPORTED_ASCII_CODES.map(&:chr).freeze
 
