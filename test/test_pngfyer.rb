@@ -532,5 +532,17 @@ class TestPngfyer < Minitest::Test
       assert_equal(expected_error_message, error_raised.message)
     end
   end
+
+  def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
+    assert_raises(NoMethodError) do
+      test_pngfyer.set_flying_cows(999)
+    end
+  end
+
+  def test_that_pngfyer_raises_no_method_error_when_unsupported_interface_message_received
+    assert_raises(NoMethodError) do
+      test_pngfyer.pngfy_result
+    end
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
