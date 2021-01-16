@@ -5,6 +5,7 @@ module AsciiPngfy
     # Reponsibilities
     #   - Keeps track of the text and replacement_text setting
     #   - Validates text and replacement_text
+    #   - Replaces unsupported text characters with replacement text
     class TextSetting
       include SetableGetable
 
@@ -20,23 +21,20 @@ module AsciiPngfy
       end
 
       def set(desired_text, desired_replacement_text = nil)
-        sanitized_text = desired_replacement_text ? String.new : desired_text.dup
-
-        if desired_replacement_text
+        if replacement_desired?(desired_replacement_text)
           desired_replacement_text = validate_text(desired_replacement_text)
 
-          # replace all characters
-          # we know the desired text is valid at this point
-          desired_text.each_char do |text_character|
-            replacement = character_supported?(text_character) ? text_character : desired_replacement_text
-            sanitized_text << replacement
+          desired_text_with_replacements = desired_text.chars.map do |text_character|
+            text_character_replacement(text_character, desired_replacement_text)
           end
+
+          desired_text = desired_text_with_replacements.join
         end
 
         # temporarily use variable to please rubocop
         @desired_replacement_text = desired_replacement_text
 
-        self.text = sanitized_text
+        self.text = desired_text
       end
 
       private
@@ -60,6 +58,14 @@ module AsciiPngfy
                         'Must contain only characters with ASCII code 10 or in the range (32..126).'
 
         raise AsciiPngfy::Exceptions::InvalidReplacementTextError, error_message
+      end
+
+      def replacement_desired?(replacement_text)
+        !!replacement_text
+      end
+
+      def text_character_replacement(text_character, desired_replacement_text)
+        character_supported?(text_character) ? text_character : desired_replacement_text
       end
     end
   end
