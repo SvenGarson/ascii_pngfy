@@ -6,14 +6,14 @@ Bundler.require(:default)
 
 require 'ascii_pngfy/pngfyer'
 
-require 'settings'
-require 'settings/configurable_settings'
-require 'settings/setable_getable_settings'
-require 'settings/color_setting'
-require 'settings/font_height_setting'
-require 'settings/horizontal_spacing_setting'
-require 'settings/vertical_spacing_setting'
-require 'settings/text_setting'
+require 'ascii_pngfy/settings'
+require 'ascii_pngfy/settings/configurable_settings'
+require 'ascii_pngfy/settings/setable_getable_settings'
+require 'ascii_pngfy/settings/color_setting'
+require 'ascii_pngfy/settings/font_height_setting'
+require 'ascii_pngfy/settings/horizontal_spacing_setting'
+require 'ascii_pngfy/settings/vertical_spacing_setting'
+require 'ascii_pngfy/settings/text_setting'
 
 require 'ascii_pngfy/renderer'
 require 'ascii_pngfy/color_rgba'
