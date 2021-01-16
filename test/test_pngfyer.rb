@@ -533,6 +533,22 @@ class TestPngfyer < Minitest::Test
     end
   end
 
+  def test_that_pngfyer_set_text_replaces_unsupported_text_characters_only_when_valid_replacement_text_passed
+    text_with_unsupported_characters = "Some #{un_supported_ascii_characters.sample} "\
+                                       "are #{un_supported_ascii_characters.sample} "\
+                                       "replaced #{un_supported_ascii_characters.sample}"
+
+    supported_replacement_text = supported_ascii_characters.sample(5).join
+
+    expected_text_after_replacement = "Some #{supported_replacement_text} "\
+                                      "are #{supported_replacement_text} "\
+                                      "replaced #{supported_replacement_text}"
+
+    test_pngfyer.set_text(text_with_unsupported_characters, supported_replacement_text)
+
+    assert_equal(expected_text_after_replacement, test_pngfyer_settings.text)
+  end
+
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
       test_pngfyer.set_flying_cows(999)

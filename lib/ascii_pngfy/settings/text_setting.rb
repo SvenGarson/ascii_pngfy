@@ -20,13 +20,23 @@ module AsciiPngfy
       end
 
       def set(desired_text, desired_replacement_text = nil)
-        # consider replacement only when non-nil
-        desired_replacement_text = validate_text(desired_replacement_text) if desired_replacement_text
+        sanitized_text = desired_replacement_text ? String.new : desired_text.dup
+
+        if desired_replacement_text
+          desired_replacement_text = validate_text(desired_replacement_text)
+
+          # replace all characters
+          # we know the desired text is valid at this point
+          desired_text.each_char do |text_character|
+            replacement = character_supported?(text_character) ? text_character : desired_replacement_text
+            sanitized_text << replacement
+          end
+        end
 
         # temporarily use variable to please rubocop
         @desired_replacement_text = desired_replacement_text
 
-        self.text = desired_text
+        self.text = sanitized_text
       end
 
       private
