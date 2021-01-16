@@ -10,9 +10,14 @@ end
 
 desc('Run current test suite')
 task(:test_current) do
-  file_to_test = 'test/test_pngfyer.rb'
-  puts "\n=== Testing single file: #{file_to_test} ==="
-  system("bundle exec ruby #{file_to_test}")
+  file_to_test = 'test/settings/test_setable_getable_settings.rb'
+
+  if file_to_test.empty?
+    puts 'Nothing to test!'
+  else
+    puts "\n=== Testing single file: #{file_to_test} ==="
+    system("bundle exec ruby #{file_to_test}")
+  end
 end
 
 desc('Run Rubocop on library')
