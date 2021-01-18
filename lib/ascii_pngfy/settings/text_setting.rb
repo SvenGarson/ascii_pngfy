@@ -24,8 +24,8 @@ module AsciiPngfy
       #  - When no replacement text is passed, the text is judged as is
       #  - Otherwise the replacement text is validated and all unsupported
       #    text characters are replaced with the replacement text
-      #  - the text is judged afer the optional replacement, wether or
-      #    not replacement has taken place or not
+      #  - The text is judged afer the optional replacement, wether or
+      #    not replacement has taken place
       def set(desired_text, desired_replacement_text = nil)
         if replacement_desired?(desired_replacement_text)
           desired_replacement_text = validate_replacement_text(desired_replacement_text)
