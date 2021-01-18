@@ -30,18 +30,10 @@ module AsciiPngfy
         if replacement_desired?(desired_replacement_text)
           desired_replacement_text = validate_replacement_text(desired_replacement_text)
 
-          desired_text_with_replacements = desired_text.chars.map do |text_character|
-            text_character_replacement(text_character, desired_replacement_text)
-          end.join
-
-          desired_text = desired_text_with_replacements
+          desired_text = replace_unsupported_characters(from: desired_text, with: desired_replacement_text)
         end
 
-        # judge text wether replacement has been performed or not
-        desired_text = validate_text(desired_text)
-
-        # logic got here - text is string with only supported characters
-        self.text = desired_text
+        self.text = validate_text(desired_text)
       end
 
       private
@@ -75,6 +67,17 @@ module AsciiPngfy
         raise AsciiPngfy::Exceptions::InvalidReplacementTextError, error_message
       end
 
+      def replace_unsupported_characters(from:, with:)
+        text_with_replacements = String.new
+
+        from.each_char do |text_character|
+          replacement_text = character_supported?(text_character) ? text_character : with
+          text_with_replacements << replacement_text
+        end
+
+        text_with_replacements
+      end
+
       def validate_text(some_text)
         return some_text if string_supported?(some_text)
 
@@ -91,10 +94,6 @@ module AsciiPngfy
 
       def replacement_desired?(replacement_text)
         !!replacement_text
-      end
-
-      def text_character_replacement(text_character, desired_replacement_text)
-        character_supported?(text_character) ? text_character : desired_replacement_text
       end
     end
   end
