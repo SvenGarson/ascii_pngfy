@@ -24,3 +24,8 @@ desc('Run Rubocop on library')
 task(:cop) do
   system('bundle exec rubocop')
 end
+
+desc('Run all tests and rubocop before next TDD cycle')
+task(exam: %I[test_all cop]) do
+  puts "\nRunning all test and running rubocop."
+end

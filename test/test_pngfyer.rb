@@ -549,6 +549,34 @@ class TestPngfyer < Minitest::Test
     assert_equal(expected_text_after_replacement, test_pngfyer_settings.text)
   end
 
+  def test_that_pngfyer_set_text_raises_invalid_character_error_when_text_contains_unsupported_characters
+    un_supported_characters_string = un_supported_ascii_characters.sample(7).join
+    text_with_unsupported_characters = "Hello #{un_supported_characters_string}"
+
+    assert_raises(AsciiPngfy::Exceptions::InvalidCharacterError) do
+      test_pngfyer.set_text(text_with_unsupported_characters)
+    end
+  end
+
+  def test_that_pngfyer_set_text_raises_invalid_character_error_with_helpful_message_when_unsupported_characters_passed
+    un_supported_characters = un_supported_ascii_characters.sample(7)
+    un_supported_inspected_characters = un_supported_characters.map(&:inspect)
+    un_supported_characters_string = un_supported_characters.join
+    un_supported_inspected_characters_list = "#{un_supported_inspected_characters[0..-2].join(', ')} and "\
+                                             "#{un_supported_inspected_characters.last}"
+
+    text_with_unsupported_characters = "Goodbye #{un_supported_characters_string}"
+
+    expected_error_message = "#{un_supported_inspected_characters_list} are all invalid text characters. "\
+                             'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidCharacterError) do
+      test_pngfyer.set_text(text_with_unsupported_characters)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
       test_pngfyer.set_flying_cows(999)
