@@ -480,14 +480,18 @@ class TestPngfyer < Minitest::Test
   end
 
   def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_when_replacement_text_contains_unsupported_char
+    supported_text = supported_ascii_characters.sample(7)
+
     un_supported_ascii_characters.each do |un_supported_character|
       assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
-        test_pngfyer.set_text('', un_supported_character)
+        test_pngfyer.set_text(supported_text, un_supported_character)
       end
     end
   end
 
   def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_with_helpful_message_when_chars_unsupported
+    supported_text = supported_ascii_characters.sample(9)
+
     until un_supported_ascii_characters.empty?
       sample_size = rand(1..5)
       character_sample = un_supported_ascii_characters.pop(sample_size)
@@ -497,7 +501,7 @@ class TestPngfyer < Minitest::Test
                                'Must contain only characters with ASCII code 10 or in the range (32..126).'
 
       error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
-        test_pngfyer.set_text('', unsupported_replacement_text)
+        test_pngfyer.set_text(supported_text, unsupported_replacement_text)
       end
 
       assert_equal(expected_error_message, error_raised.message)
@@ -505,16 +509,18 @@ class TestPngfyer < Minitest::Test
   end
 
   def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_when_replacement_text_contains_unicode_chars
+    supported_text = supported_ascii_characters.sample(5)
     common_un_supported_unicode_characters = ["\u{2122}", "\u{2318}", "\u{2615}", "\u{263a}", "\u{2713}", "\u{2661}"]
 
     common_un_supported_unicode_characters.each do |un_supported_unicode_character|
       assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
-        test_pngfyer.set_text('', un_supported_unicode_character)
+        test_pngfyer.set_text(supported_text, un_supported_unicode_character)
       end
     end
   end
 
   def test_that_pngfyer_set_text_raises_invalid_replacement_text_error_with_helpful_message_when_unicode_chars_included
+    supported_text = supported_ascii_characters.sample(8)
     common_un_supported_unicode_characters = ["\u{2122}", "\u{2318}", "\u{2615}", "\u{263a}", "\u{2713}", "\u{2661}"]
 
     until common_un_supported_unicode_characters.empty?
@@ -526,14 +532,14 @@ class TestPngfyer < Minitest::Test
                                'Must contain only characters with ASCII code 10 or in the range (32..126).'
 
       error_raised = assert_raises(AsciiPngfy::Exceptions::InvalidReplacementTextError) do
-        test_pngfyer.set_text('', unsupported_replacement_text)
+        test_pngfyer.set_text(supported_text, unsupported_replacement_text)
       end
 
       assert_equal(expected_error_message, error_raised.message)
     end
   end
 
-  def test_that_pngfyer_set_text_replaces_unsupported_text_characters_only_when_valid_replacement_text_passed
+  def test_that_pngfyer_set_text_replaces_unsupported_text_characters_only_when_valid_replacement_text_is_passed
     text_with_unsupported_characters = "Some #{un_supported_ascii_characters.sample} "\
                                        "are #{un_supported_ascii_characters.sample} "\
                                        "replaced #{un_supported_ascii_characters.sample}"
@@ -556,6 +562,64 @@ class TestPngfyer < Minitest::Test
     assert_raises(AsciiPngfy::Exceptions::InvalidCharacterError) do
       test_pngfyer.set_text(text_with_unsupported_characters)
     end
+  end
+
+  def test_that_pngfyer_set_text_raises_empty_text_error_when_text_is_empty_and_no_replacement_text_is_passed
+    empty_text = String.new
+
+    assert_raises(AsciiPngfy::Exceptions::EmptyTextError) do
+      test_pngfyer.set_text(empty_text)
+    end
+  end
+
+  def test_that_pngfyer_set_text_raises_empty_text_error_with_helpful_message_when_empty_text_passed_without_replacement
+    # If no replacement text is defined and the text is empty, the text itself is empty
+    empty_text = String.new
+    expected_error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
+                             'Must contain at least one character with ASCII code 10 or in the range (32..126).'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::EmptyTextError) do
+      test_pngfyer.set_text(empty_text)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+
+  def test_that_pngfyer_set_text_raises_empty_text_error_with_helpful_message_when_replacement_causes_text_to_be_empty
+    # If replacement text is defined and the text contains only unsupported characters, all unsupported
+    # characters are replaced with the empty string. The result is empty text.
+    #
+    # The text cannot end up empty if it contains any supported characters, even if the replacement text is empty,
+    # so we only need to test the case where the text contains exlusively unsupported characters.
+    unsupported_text = un_supported_ascii_characters.sample(27).join
+    empty_replacement_text = String.new
+
+    expected_error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
+                             'Must contain at least one character with ASCII code 10 or in the range (32..126). '\
+                             'Hint: An empty replacement text causes text with only unsupported characters to end up '\
+                             'as empty string.'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::EmptyTextError) do
+      test_pngfyer.set_text(unsupported_text, empty_replacement_text)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+
+  def test_that_pngfyer_set_text_raises_empty_text_error_with_helpful_message_when_both_text_and_replacement_text_empty
+    # The text ends up empty if both the text and replacement text are empty
+    empty_text = String.new
+    empty_replacement_text = String.new
+
+    expected_error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
+                             'Must contain at least one character with ASCII code 10 or in the range (32..126). '\
+                             'Hint: Both the text and the replacement text are empty.'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::EmptyTextError) do
+      test_pngfyer.set_text(empty_text, empty_replacement_text)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
   end
 
   def test_that_pngfyer_set_text_raises_invalid_character_error_with_helpful_message_when_unsupported_characters_passed

@@ -19,5 +19,7 @@ module AsciiPngfy
     class InvalidReplacementTextError < AsciiPngfyError; end
 
     class InvalidCharacterError < AsciiPngfyError; end
+
+    class EmptyTextError < AsciiPngfyError; end
   end
 end
