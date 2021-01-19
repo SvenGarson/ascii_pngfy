@@ -21,5 +21,7 @@ module AsciiPngfy
     class InvalidCharacterError < AsciiPngfyError; end
 
     class EmptyTextError < AsciiPngfyError; end
+
+    class TextLineTooLongError < AsciiPngfyError; end
   end
 end

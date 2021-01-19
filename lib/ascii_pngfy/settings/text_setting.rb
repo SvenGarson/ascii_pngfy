@@ -30,9 +30,12 @@ module AsciiPngfy
       #   all unsupported text characters are replaced with the replacement text
       # - The text is then validated post replacement to make sure it is not empty, the same as
       #   pre replacement
-      # - Finally the text is updated with the result
+      # - At this point the text is validated to only contain supported ASCII characters
+      #   and has its dimensions checked in terms of the needed png texture size needed
+      #   to fit the resulting text along with the character spacing previously set.
+      # - Finally the text is updated
       def set(desired_text, desired_replacement_text = nil)
-        desired_text = pre_replacement_text_validation(desired_text, desired_replacement_text)
+        pre_replacement_text_validation(desired_text, desired_replacement_text)
 
         if replacement_desired?(desired_replacement_text)
           desired_replacement_text = validate_replacement_text(desired_replacement_text)
@@ -40,9 +43,12 @@ module AsciiPngfy
           desired_text = replace_unsupported_characters(from: desired_text, with: desired_replacement_text)
         end
 
-        desired_text = post_replacement_text_validation(desired_text)
+        post_replacement_text_validation(desired_text)
+        validate_text_contents(desired_text)
+        validate_text_image_dimensions(desired_text)
 
-        self.text = validate_text_contents(desired_text)
+        # set the fully validated and possibly sanitized text
+        self.text = desired_text
       end
 
       private
@@ -88,22 +94,6 @@ module AsciiPngfy
         text_with_replacements
       end
 
-      def validate_text_contents(some_text)
-        # This method only accounts for non-empty strings that contains unsupported characters.
-        # Empty strings are handled separately to separate different types of errors more clearly
-        return some_text if string_supported?(some_text)
-
-        un_supported_characters = extract_unsupported_characters(some_text)
-        un_supported_inspected_characters = un_supported_characters.map(&:inspect)
-        un_supported_characters_list = "#{un_supported_inspected_characters[0..-2].join(', ')} and "\
-                                       "#{un_supported_inspected_characters.last}"
-
-        error_message = "#{un_supported_characters_list} are all invalid text characters. "\
-                        'Must contain only characters with ASCII code 10 or in the range (32..126).'
-
-        raise AsciiPngfy::Exceptions::InvalidCharacterError, error_message
-      end
-
       def replacement_desired?(replacement_text)
         !!replacement_text
       end
@@ -131,6 +121,65 @@ module AsciiPngfy
                         'empty string.'
 
         raise AsciiPngfy::Exceptions::EmptyTextError, error_message
+      end
+
+      def validate_text_contents(some_text)
+        # This method only accounts for non-empty strings that contains unsupported characters.
+        # Empty strings are handled separately to separate different types of errors more clearly
+        return some_text if string_supported?(some_text)
+
+        un_supported_characters = extract_unsupported_characters(some_text)
+        un_supported_inspected_characters = un_supported_characters.map(&:inspect)
+        un_supported_characters_list = "#{un_supported_inspected_characters[0..-2].join(', ')} and "\
+                                       "#{un_supported_inspected_characters.last}"
+
+        error_message = "#{un_supported_characters_list} are all invalid text characters. "\
+                        'Must contain only characters with ASCII code 10 or in the range (32..126).'
+
+        raise AsciiPngfy::Exceptions::InvalidCharacterError, error_message
+      end
+
+      def validate_text_image_dimensions(desired_text)
+        texture_width, = determine_text_image_dimensions(desired_text)
+
+        return desired_text unless texture_width > 3840
+
+        capped_text = cap_string(desired_text, '..', 60)
+
+        error_message = "The text line #{capped_text} is too long to be represented in a 3840 pixel wide png."\
+                        ' Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+
+        raise AsciiPngfy::Exceptions::TextLineTooLongError, error_message
+      end
+
+      def determine_text_image_dimensions(desired_text)
+        # the same logic will probably be needed in the renderer to plot the image
+        # for now keep this here but it is not the responsibility of the text settings
+        # and also this assumed the character spacing and does not actually use the
+        # settings set before
+        text_lines = desired_text.split("\n", -1)
+        longest_line_length = text_lines.max_by(&:length).size
+        lines_total = text_lines.length
+
+        horizontal_spacing_count = longest_line_length - 1
+        vertical_spacing_count = lines_total - 1
+        texture_width = (longest_line_length * 5) + (horizontal_spacing_count * 0)
+        texture_height = (lines_total * 9) + (vertical_spacing_count * 0)
+
+        [texture_width, texture_height]
+      end
+
+      def cap_string(some_string, desired_separator, desired_cap_length)
+        if some_string.length <= desired_cap_length
+          some_string
+        else
+          half_cap_length = (desired_cap_length - desired_separator.length) / 2
+
+          string_beginning_portion = some_string[0, half_cap_length]
+          string_end_portion = some_string[-half_cap_length..]
+
+          "#{string_beginning_portion}#{desired_separator}#{string_end_portion}"
+        end
       end
     end
   end

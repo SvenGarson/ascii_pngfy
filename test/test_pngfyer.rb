@@ -641,6 +641,48 @@ class TestPngfyer < Minitest::Test
     assert_equal(expected_error_message, error_raised.message)
   end
 
+  # rubocop:disable Naming/MethodName
+  def test_that_pngfyer_set_text_stores_text_with_line_length_that_can_be_represented_with_png_of_up_to_4K_wide
+    test_pngfyer.set_horizontal_spacing(0)
+    supported_line_length = 3840 / 5
+    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * supported_line_length)
+    expected_text = line_exceeding_text_with_supported_characters
+
+    test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+
+    assert_equal(expected_text, test_pngfyer_settings.text)
+  end
+
+  def test_that_pngfyer_set_text_raises_text_line_too_long_error_when_text_line_and_horizontal_spacing_exceed_4K_width
+    test_pngfyer.set_horizontal_spacing(0)
+    supported_line_length = 3840 / 5
+    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * (supported_line_length + 1))
+
+    assert_raises(AsciiPngfy::Exceptions::TextLineTooLongError) do
+      test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+    end
+  end
+  # rubocop:enable Naming/MethodName
+
+  def test_that_pngfyer_set_text_raises_text_line_too_long_error_with_helpful_message_when_line_too_long
+    test_pngfyer.set_horizontal_spacing(0)
+    supported_line_length = 3840 / 5
+    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * (supported_line_length + 1))
+
+    capped_text = line_exceeding_text_with_supported_characters[0, 29]
+    capped_text << '..'
+    capped_text << line_exceeding_text_with_supported_characters[-29..]
+
+    expected_error_message = "The text line #{capped_text} is too long to be represented in a 3840 pixel wide png."\
+                             ' Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::TextLineTooLongError) do
+      test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
       test_pngfyer.set_flying_cows(999)
