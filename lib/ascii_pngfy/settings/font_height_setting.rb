@@ -9,7 +9,9 @@ module AsciiPngfy
       include SetableGetable
 
       def initialize(initial_font_height)
-        self.font_height = initial_font_height
+        self.font_height = 0
+
+        set(initial_font_height)
       end
 
       def get

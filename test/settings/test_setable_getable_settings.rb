@@ -60,7 +60,7 @@ class TestSetableGetableSettings < Minitest::Test
   def test_that_setable_getable_settings_initializes_text_to_empty_string
     default_text = settings.text
 
-    assert_equal(String.new, default_text)
+    assert_equal('<3 Ascii-Pngfy <3', default_text)
   end
 
   def test_that_setable_getable_settings_font_color_can_be_set

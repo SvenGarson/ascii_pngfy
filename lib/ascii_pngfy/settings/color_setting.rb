@@ -9,7 +9,14 @@ module AsciiPngfy
       include SetableGetable
 
       def initialize(initial_red, initial_green, initial_blue, initial_alpha)
-        self.color = ColorRGBA.new(initial_red, initial_green, initial_blue, initial_alpha)
+        self.color = AsciiPngfy::ColorRGBA.new(0, 0, 0, 0)
+
+        set(
+          red: initial_red,
+          green: initial_green,
+          blue: initial_blue,
+          alpha: initial_alpha
+        )
       end
 
       def get

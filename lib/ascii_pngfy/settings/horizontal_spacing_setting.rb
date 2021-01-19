@@ -9,7 +9,9 @@ module AsciiPngfy
       include SetableGetable
 
       def initialize(initial_spacing)
-        self.horizontal_spacing = initial_spacing
+        self.horizontal_spacing = 0
+
+        set(initial_spacing)
       end
 
       def get

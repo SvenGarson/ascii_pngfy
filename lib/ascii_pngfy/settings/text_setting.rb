@@ -14,6 +14,8 @@ module AsciiPngfy
 
       def initialize
         self.text = ''
+
+        set('<3 Ascii-Pngfy <3')
       end
 
       def get
