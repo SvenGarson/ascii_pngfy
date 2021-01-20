@@ -753,6 +753,25 @@ class TestPngfyer < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize
 
+  def test_that_pngfyer_pngfy_returns_result_instance_with_default_settings
+    pngfy_result = test_pngfyer.pngfy
+
+    assert_instance_of(AsciiPngfy::Result, pngfy_result)
+  end
+
+  def test_that_pngfyer_pngfy_returns_result_instance_with_custom_settings
+    test_pngfyer.set_font_color(red: 125, green: 25, blue: 198, alpha: 255)
+    test_pngfyer.set_background_color(red: 15, green: 15, blue: 15, alpha: 255)
+    test_pngfyer.set_font_height(18)
+    test_pngfyer.set_horizontal_spacing(3)
+    test_pngfyer.set_vertical_spacing(4)
+    test_pngfyer.set_text("Choose your weapon:\n- Sword\n- Axe")
+
+    pngfy_result = test_pngfyer.pngfy
+
+    assert_instance_of(AsciiPngfy::Result, pngfy_result)
+  end
+
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
       test_pngfyer.set_flying_cows(999)

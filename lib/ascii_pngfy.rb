@@ -17,6 +17,7 @@ require 'ascii_pngfy/settings/vertical_spacing_setting'
 require 'ascii_pngfy/settings/text_setting'
 
 require 'ascii_pngfy/renderer'
+require 'ascii_pngfy/result'
 require 'ascii_pngfy/color_rgba'
 require 'ascii_pngfy/exceptions'
 

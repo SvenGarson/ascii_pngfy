@@ -57,7 +57,7 @@ class TestSetableGetableSettings < Minitest::Test
     assert_equal(1, default_vertical_spacing)
   end
 
-  def test_that_setable_getable_settings_initializes_text_to_empty_string
+  def test_that_setable_getable_settings_initializes_text_to_non_empty_string
     default_text = settings.text
 
     assert_equal('<3 Ascii-Pngfy <3', default_text)

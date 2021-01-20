@@ -26,6 +26,10 @@ module AsciiPngfy
       end
     end
 
+    def pngfy
+      Result.new
+    end
+
     private
 
     attr_accessor(:settings)
