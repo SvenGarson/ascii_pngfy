@@ -23,5 +23,7 @@ module AsciiPngfy
     class EmptyTextError < AsciiPngfyError; end
 
     class TextLineTooLongError < AsciiPngfyError; end
+
+    class TooManyTextLinesError < AsciiPngfyError; end
   end
 end

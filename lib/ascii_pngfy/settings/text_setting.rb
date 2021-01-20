@@ -139,17 +139,34 @@ module AsciiPngfy
         raise AsciiPngfy::Exceptions::InvalidCharacterError, error_message
       end
 
-      def validate_text_image_dimensions(desired_text)
-        texture_width, = determine_text_image_dimensions(desired_text)
+      def validate_text_image_width(desired_text, image_width)
+        return desired_text unless image_width > 3840
 
-        return desired_text unless texture_width > 3840
+        longest_text_line = desired_text.split("\n", -1).max_by(&:size)
+        capped_text = cap_string(longest_text_line, '..', 60)
+
+        error_message = "The text line #{capped_text.inspect} is too long to be represented in a 3840 pixel wide"\
+                        ' png. Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+
+        raise AsciiPngfy::Exceptions::TextLineTooLongError, error_message
+      end
+
+      def validate_text_image_height(desired_text, image_height)
+        return desired_text unless image_height > 2160
 
         capped_text = cap_string(desired_text, '..', 60)
 
-        error_message = "The text line #{capped_text} is too long to be represented in a 3840 pixel wide png."\
-                        ' Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+        error_message = "The text #{capped_text.inspect} contains too many lines to be represented in a 2160 pixel"\
+                        ' high png. Hint: Use less text lines and/or reduce the vertical character spacing.'
 
-        raise AsciiPngfy::Exceptions::TextLineTooLongError, error_message
+        raise AsciiPngfy::Exceptions::TooManyTextLinesError, error_message
+      end
+
+      def validate_text_image_dimensions(desired_text)
+        image_width, image_height = determine_text_image_dimensions(desired_text)
+
+        validate_text_image_width(desired_text, image_width)
+        validate_text_image_height(desired_text, image_height)
       end
 
       def determine_text_image_dimensions(desired_text)

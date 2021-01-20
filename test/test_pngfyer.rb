@@ -17,6 +17,7 @@ class TestPngfyer < Minitest::Test
     :test_pngfyer_settings,
     :all_ascii_characters,
     :supported_ascii_characters,
+    :supported_ascii_characters_without_newline,
     :un_supported_ascii_characters
   )
 
@@ -26,6 +27,7 @@ class TestPngfyer < Minitest::Test
 
     @all_ascii_characters = (0..255).map(&:chr)
 
+    @supported_ascii_characters_without_newline = (32..126).to_a.map(&:chr)
     @supported_ascii_characters = ([10] + (32..126).to_a).map(&:chr)
 
     @un_supported_ascii_characters = all_ascii_characters - supported_ascii_characters
@@ -645,10 +647,10 @@ class TestPngfyer < Minitest::Test
   def test_that_pngfyer_set_text_stores_text_with_line_length_that_can_be_represented_with_png_of_up_to_4K_wide
     test_pngfyer.set_horizontal_spacing(0)
     supported_line_length = 3840 / 5
-    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * supported_line_length)
-    expected_text = line_exceeding_text_with_supported_characters
+    line_exceeding_text = (supported_ascii_characters_without_newline.sample * supported_line_length)
+    expected_text = line_exceeding_text
 
-    test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+    test_pngfyer.set_text(line_exceeding_text)
 
     assert_equal(expected_text, test_pngfyer_settings.text)
   end
@@ -656,10 +658,10 @@ class TestPngfyer < Minitest::Test
   def test_that_pngfyer_set_text_raises_text_line_too_long_error_when_text_line_and_horizontal_spacing_exceed_4K_width
     test_pngfyer.set_horizontal_spacing(0)
     supported_line_length = 3840 / 5
-    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * (supported_line_length + 1))
+    line_exceeding_text = (supported_ascii_characters_without_newline.sample * (supported_line_length + 1))
 
     assert_raises(AsciiPngfy::Exceptions::TextLineTooLongError) do
-      test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+      test_pngfyer.set_text(line_exceeding_text)
     end
   end
   # rubocop:enable Naming/MethodName
@@ -667,21 +669,89 @@ class TestPngfyer < Minitest::Test
   def test_that_pngfyer_set_text_raises_text_line_too_long_error_with_helpful_message_when_line_too_long
     test_pngfyer.set_horizontal_spacing(0)
     supported_line_length = 3840 / 5
-    line_exceeding_text_with_supported_characters = (supported_ascii_characters.sample * (supported_line_length + 1))
+    line_exceeding_text = (supported_ascii_characters_without_newline.sample * (supported_line_length + 1))
 
-    capped_text = line_exceeding_text_with_supported_characters[0, 29]
-    capped_text << '..'
-    capped_text << line_exceeding_text_with_supported_characters[-29..]
+    capped_text = "#{line_exceeding_text[0, 29]}..#{line_exceeding_text[-29..]}"
 
-    expected_error_message = "The text line #{capped_text} is too long to be represented in a 3840 pixel wide png."\
-                             ' Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+    expected_error_message = "The text line #{capped_text.inspect} is too long to be represented in a 3840 pixel wide "\
+                             'png. Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
 
     error_raised = assert_raises(AsciiPngfy::Exceptions::TextLineTooLongError) do
-      test_pngfyer.set_text(line_exceeding_text_with_supported_characters)
+      test_pngfyer.set_text(line_exceeding_text)
     end
 
     assert_equal(expected_error_message, error_raised.message)
   end
+
+  # rubocop:disable Metrics/AbcSize
+  def test_that_pngfyer_set_text_raises_text_line_too_long_error_with_message_that_contains_the_exceeding_text_line
+    test_pngfyer.set_horizontal_spacing(0)
+    supported_line_length = 3840 / 5
+    exceeding_line = supported_ascii_characters_without_newline.sample * (supported_line_length + 1)
+    line_exceeding_text = [
+      'This is the first line.',
+      'This is the second line.',
+      exceeding_line,
+      'This is the last line'
+    ].join("\n")
+
+    capped_text = "#{exceeding_line[0, 29]}..#{exceeding_line[-29..]}"
+
+    expected_error_message = "The text line #{capped_text.inspect} is too long to be represented in a 3840 pixel wide "\
+                             'png. Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::TextLineTooLongError) do
+      test_pngfyer.set_text(line_exceeding_text)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  # rubocop:disable Naming/MethodName
+  def test_that_pngfyer_set_text_raises_too_many_text_lines_error_when_text_and_vertical_spacing_exceed_4K_height
+    test_pngfyer.set_vertical_spacing(0)
+    supported_line_count = 2160 / 9
+
+    # test with text that has one line more than is supported
+    line_count_exceeding_text = String.new
+    supported_line_count.times do |_|
+      supported_sample_text = supported_ascii_characters_without_newline.sample(10).join
+      line_count_exceeding_text << "#{supported_sample_text}\n"
+    end
+    line_count_exceeding_text << 'This line exceeds the supported line count!'
+
+    assert_raises(AsciiPngfy::Exceptions::TooManyTextLinesError) do
+      test_pngfyer.set_text(line_count_exceeding_text)
+    end
+  end
+  # rubocop:enable Naming/MethodName
+
+  # rubocop:disable Metrics/AbcSize
+  def test_that_pngfyer_set_text_raises_too_many_text_lines_error_with_helpful_message_when_text_contains_too_many_lines
+    test_pngfyer.set_vertical_spacing(0)
+    supported_line_count = 2160 / 9
+
+    # test with text that has one line more than is supported
+    line_count_exceeding_text = String.new
+    supported_line_count.times do |_|
+      supported_sample_text = supported_ascii_characters_without_newline.sample(10).join
+      line_count_exceeding_text << "#{supported_sample_text}\n"
+    end
+    line_count_exceeding_text << 'This line exceeds the supported line count!'
+
+    capped_text = "#{line_count_exceeding_text[0, 29]}..#{line_count_exceeding_text[-29..]}"
+
+    expected_error_message = "The text #{capped_text.inspect} contains too many lines to be represented in a 2160 "\
+                             'pixel high png. Hint: Use less text lines and/or reduce the vertical character spacing.'
+
+    error_raised = assert_raises(AsciiPngfy::Exceptions::TooManyTextLinesError) do
+      test_pngfyer.set_text(line_count_exceeding_text)
+    end
+
+    assert_equal(expected_error_message, error_raised.message)
+  end
+  # rubocop:enable Metrics/AbcSize
 
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
