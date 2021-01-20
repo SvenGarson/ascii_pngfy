@@ -48,7 +48,7 @@ module AsciiPngfy
         validate_text_image_dimensions(desired_text)
 
         # set the fully validated and possibly sanitized text
-        self.text = desired_text
+        self.text = desired_text.dup
       end
 
       private

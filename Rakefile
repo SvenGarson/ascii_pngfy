@@ -11,7 +11,7 @@ end
 desc('Run current test suite')
 task(:test_current) do
   # file_to_test = 'test/test_pngfyer.rb'
-  file_to_test = 'test/settings/test_vertical_spacing_setting.rb'
+  file_to_test = 'test/settings/test_text_setting.rb'
 
   if file_to_test.empty?
     puts 'Nothing to test!'
