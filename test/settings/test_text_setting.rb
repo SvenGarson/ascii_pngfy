@@ -4,17 +4,19 @@ require_relative '../testing_prerequisites'
 
 class TestTextSetting < Minitest::Test
   # TextSetting#set
-    # return value - test that the final text set (if no error raised) is returned - the value here only for interface purposes
-    # leakage - test that the returned text cannot be used to change internal state
-  # TextSettings#get
-    # no injection - no arguments
-    # return value - test that return value is the last text set by #set - just the value for this one
-    # leakage- test that the returned text cannot be used to change internal state
+  # return value - test that the final text set (if no error raised) is returned - the value here only for
+  #       interface purposes
+  # leakage - test that the returned text cannot be used to change internal state
 
-  #test_that_color_setting_set_returns_color_rgba_instance_where_color_components_reflect_the_new_internal_color
-  #test_that_color_settings_set_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
-  #test_that_color_setting_get_returns_color_rgba_instance_where_color_components_reflect_the_last_color_set
-  #test_that_color_settings_get_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
+  # TextSettings#get
+  # no injection - no arguments
+  # return value - test that return value is the last text set by #set - just the value for this one
+  # leakage- test that the returned text cannot be used to change internal state
+
+  # test_that_color_setting_set_returns_color_rgba_instance_where_color_components_reflect_the_new_internal_color
+  # test_that_color_settings_set_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
+  # test_that_color_setting_get_returns_color_rgba_instance_where_color_components_reflect_the_last_color_set
+  # test_that_color_settings_get_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
 
   attr_reader(:text_setting)
 
