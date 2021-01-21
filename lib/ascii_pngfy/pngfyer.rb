@@ -27,7 +27,7 @@ module AsciiPngfy
     end
 
     def pngfy
-      Result.new
+      Result.new(settings)
     end
 
     private
