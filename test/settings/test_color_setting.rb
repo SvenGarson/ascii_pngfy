@@ -54,8 +54,8 @@ class TestColorSetting < Minitest::Test
     returned_color.blue = mutative_color.blue
     returned_color.alpha = mutative_color.alpha
 
-    current_internal_color = color_setting.get
+    most_recent_internal_color = color_setting.get
 
-    refute_equal(mutative_color, current_internal_color)
+    refute_equal(mutative_color, most_recent_internal_color)
   end
 end

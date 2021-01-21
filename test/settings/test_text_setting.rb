@@ -3,21 +3,6 @@
 require_relative '../testing_prerequisites'
 
 class TestTextSetting < Minitest::Test
-  # TextSetting#set
-  # return value - test that the final text set (if no error raised) is returned - the value here only for
-  #       interface purposes
-  # leakage - test that the returned text cannot be used to change internal state
-
-  # TextSettings#get
-  # no injection - no arguments
-  # return value - test that return value is the last text set by #set - just the value for this one
-  # leakage- test that the returned text cannot be used to change internal state
-
-  # test_that_color_setting_set_returns_color_rgba_instance_where_color_components_reflect_the_new_internal_color
-  # test_that_color_settings_set_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
-  # test_that_color_setting_get_returns_color_rgba_instance_where_color_components_reflect_the_last_color_set
-  # test_that_color_settings_get_returns_color_rgba_instance_that_cannot_be_used_to_mutate_internal_state
-
   attr_reader(:text_setting)
 
   def setup
@@ -44,5 +29,47 @@ class TestTextSetting < Minitest::Test
     returned_text = text_setting.set('My name is Bond...')
 
     assert_equal(expected_returned_text, returned_text)
+  end
+
+  def test_that_text_setting_set_returns_the_same_text_reference_that_is_passed_as_argument
+    text = 'Doug Heffernan.'
+
+    returned_text = text_setting.set(text)
+
+    assert_same(text, returned_text)
+  end
+
+  def test_that_text_setting_set_returns_text_that_cannot_be_used_to_mutate_internal_state
+    returned_text = text_setting.set('I am Superwoman')
+
+    # we want to make sure that the user cannot use the returned reference to change the internal text
+    # settings by using string methods directly
+    returned_text.replace('Mein Schatz!')
+
+    most_recent_internal_text = text_setting.get
+
+    refute_equal('Mein Schatz!', most_recent_internal_text)
+  end
+
+  def test_that_text_setting_get_returns_text_that_reflects_the_last_text_set
+    expected_returned_text = 'Leeroy Jenkins'
+    text_setting.set(expected_returned_text)
+
+    returned_text = text_setting.get
+
+    assert_equal(expected_returned_text, returned_text)
+  end
+
+  def test_that_text_setting_get_returns_text_that_cannot_be_used_to_mutate_internal_state
+    text_setting.set('I am Superman')
+    returned_text = text_setting.get
+
+    # we want to make sure that the user cannot use the returned reference to change the internal text
+    # settings by using string methods directly
+    returned_text.replace('I am Super WOMAN')
+
+    most_recent_internal_text = text_setting.get
+
+    refute_equal('I am Super WOMAN', most_recent_internal_text)
   end
 end

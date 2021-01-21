@@ -19,7 +19,7 @@ module AsciiPngfy
       end
 
       def get
-        text
+        text.dup
       end
 
       # the philosophy behind this method is as follows:
@@ -49,6 +49,8 @@ module AsciiPngfy
 
         # set the fully validated and possibly sanitized text
         self.text = desired_text.dup
+
+        desired_text
       end
 
       private
