@@ -759,14 +759,7 @@ class TestPngfyer < Minitest::Test
     assert_instance_of(AsciiPngfy::Result, pngfy_result)
   end
 
-  def test_that_pngfyer_pngfy_returns_result_instance_with_custom_settings
-    test_pngfyer.set_font_color(red: 125, green: 25, blue: 198, alpha: 255)
-    test_pngfyer.set_background_color(red: 15, green: 15, blue: 15, alpha: 255)
-    test_pngfyer.set_font_height(18)
-    test_pngfyer.set_horizontal_spacing(3)
-    test_pngfyer.set_vertical_spacing(4)
-    test_pngfyer.set_text("Choose your weapon:\n- Sword\n- Axe")
-
+  def test_that_pngfyer_pngfy_returns_result_instance
     pngfy_result = test_pngfyer.pngfy
 
     assert_instance_of(AsciiPngfy::Result, pngfy_result)
