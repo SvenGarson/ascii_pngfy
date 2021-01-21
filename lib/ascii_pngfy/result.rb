@@ -3,7 +3,7 @@ require 'chunky_png'
 
 module AsciiPngfy
   # Reponsibilities
-  #   > Provides access to the data points used to generate this result:
+  #   > Provides access to the following data points
   #       - generated png
   #       - render dimensions
   #       - settings used
