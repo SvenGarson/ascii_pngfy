@@ -204,14 +204,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_font_color_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_font_color(red: 111, green: 121, blue: 131, alpha: 141)
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_font_color = oldest_settings.font_color
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_font_color(red: 0, green: 0, blue: 0, alpha: 0)
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_font_color = most_recent_settings.font_color
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_font_color = oldest_result.settings.font_color
+    most_recent_font_color = most_recent_result.settings.font_color
 
     refute_equal(oldest_font_color, most_recent_font_color)
   end
@@ -237,14 +237,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_background_color_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_background_color(red: 159, green: 167, blue: 65, alpha: 255)
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_background_color = oldest_settings.background_color
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_background_color(red: 0, green: 0, blue: 0, alpha: 0)
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_background_color = most_recent_settings.background_color
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_background_color = oldest_result.settings.background_color
+    most_recent_background_color = most_recent_result.settings.background_color
 
     refute_equal(oldest_background_color, most_recent_background_color)
   end
@@ -270,14 +270,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_font_height_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_font_height(18)
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_font_height = oldest_settings.font_height
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_font_height(45)
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_font_height = most_recent_settings.font_height
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_font_height = oldest_result.settings.font_height
+    most_recent_font_height = most_recent_result.settings.font_height
 
     refute_equal(oldest_font_height, most_recent_font_height)
   end
@@ -303,14 +303,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_horizontal_spacing_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_horizontal_spacing(10)
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_horizontal_spacing = oldest_settings.horizontal_spacing
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_horizontal_spacing(22)
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_horizontal_spacing = most_recent_settings.horizontal_spacing
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_horizontal_spacing = oldest_result.settings.horizontal_spacing
+    most_recent_horizontal_spacing = most_recent_result.settings.horizontal_spacing
 
     refute_equal(oldest_horizontal_spacing, most_recent_horizontal_spacing)
   end
@@ -336,14 +336,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_vertical_spacing_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_vertical_spacing(1)
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_vertical_spacing = oldest_settings.vertical_spacing
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_vertical_spacing(5)
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_vertical_spacing = most_recent_settings.vertical_spacing
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_vertical_spacing = oldest_result.settings.vertical_spacing
+    most_recent_vertical_spacing = most_recent_result.settings.vertical_spacing
 
     refute_equal(oldest_vertical_spacing, most_recent_vertical_spacing)
   end
@@ -369,14 +369,14 @@ class TestResult < Minitest::Test
   def test_that_result_settings_text_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_text('Why so serious?')
     oldest_result = pngfyer.pngfy
-    oldest_settings = oldest_result.settings
-    oldest_text = oldest_settings.text
 
     # the following setting changes and result creation should not affect the previous result in any way
     pngfyer.set_text('That is none of your business!')
     most_recent_result = pngfyer.pngfy
-    most_recent_settings = most_recent_result.settings
-    most_recent_text = most_recent_settings.text
+
+    # this is why we pull the Result#settings data after a setting has been changed
+    oldest_text = oldest_result.settings.text
+    most_recent_text = most_recent_result.settings.text
 
     refute_equal(oldest_text, most_recent_text)
   end

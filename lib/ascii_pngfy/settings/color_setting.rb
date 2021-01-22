@@ -32,7 +32,11 @@ module AsciiPngfy
         color.dup
       end
 
-      private
+      def initialize_copy(original_color_setting)
+        self.color = original_color_setting.color.dup
+      end
+
+      protected
 
       attr_accessor(:color)
     end

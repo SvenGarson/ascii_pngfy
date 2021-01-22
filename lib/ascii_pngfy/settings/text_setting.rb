@@ -53,9 +53,15 @@ module AsciiPngfy
         desired_text
       end
 
-      private
+      def initialize_copy(original_text_setting)
+        self.text = original_text_setting.text.dup
+      end
+
+      protected
 
       attr_accessor(:text)
+
+      private
 
       def character_supported?(some_character)
         SUPPORTED_ASCII_CHARACTERS.include?(some_character)

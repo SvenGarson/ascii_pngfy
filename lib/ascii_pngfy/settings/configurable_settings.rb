@@ -44,10 +44,11 @@ module AsciiPngfy
         # for a given value
         duplicate.supported_operations = duplicate.supported_operations.dup
 
-        # the supported_settings hash must be dupped at the hash level as well as the key level because
-        # the keys are symbols, so always point to the same value in memory and the values are custom class
+        # the supported_settings hash must be dupped at the hash level as well as each value for every k/v pair
+        # because the keys are symbols, so always point to the same value in memory and the values are custom class
         # instances and may need specific duplication logic at that implementation level to avoid state sharing
         # between duplicated objects
+        duplicate.settings = duplicate.settings.dup.transform_values(&:dup)
 
         duplicate
       end
