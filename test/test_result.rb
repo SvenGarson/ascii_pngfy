@@ -200,5 +200,20 @@ class TestResult < Minitest::Test
       result.settings.set_font_color(red: 50, green: 100, blue: 150, alpha: 200)
     end
   end
+
+  def test_that_result_settings_font_color_reflects_settings_at_result_creation_time_and_does_not_track_future_changes
+    pngfyer.set_font_color(red: 111, green: 121, blue: 131, alpha: 141)
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_font_color = oldest_settings.font_color
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_font_color(red: 0, green: 0, blue: 0, alpha: 0)
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_font_color = most_recent_settings.font_color
+
+    refute_equal(most_recent_font_color, oldest_font_color)
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength

@@ -36,9 +36,32 @@ module AsciiPngfy
         setting(setting_name).public_send(setting_operation, *arguments)
       end
 
-      private
+      def dup
+        duplicate = super
+
+        # the supported_operations hash can be dupped at the hash because keys are symbols and the values
+        # are booleans, i.e. both the keys and the values always point to the same symbol/boolean in memory
+        # for a given value
+        duplicate.supported_operations = duplicate.supported_operations.dup
+
+        # the supported_settings hash must be dupped at the hash level as well as the key level because
+        # the keys are symbols, so always point to the same value in memory and the values are custom class
+        # instances and may need specific duplication logic at that implementation level to avoid state sharing
+        # between duplicated objects
+
+        duplicate
+      end
+
+      protected
+
+      def disable_setters
+        supported_operations[SET] = false
+        self
+      end
 
       attr_accessor(:supported_operations, :settings)
+
+      private
 
       def initialize_supported_operations(setable, getable)
         self.supported_operations = {

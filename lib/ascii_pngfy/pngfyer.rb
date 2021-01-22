@@ -27,7 +27,8 @@ module AsciiPngfy
     end
 
     def pngfy
-      Result.new(settings)
+      # result from getable only settings
+      Result.new(settings.getter_only_snapshot)
     end
 
     private
