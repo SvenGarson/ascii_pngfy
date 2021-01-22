@@ -281,5 +281,38 @@ class TestResult < Minitest::Test
 
     refute_equal(oldest_font_height, most_recent_font_height)
   end
+
+  def test_that_result_settings_horizontal_spacing_returns_the_expected_horizontal_spacing_set_previously
+    pngfyer.set_horizontal_spacing(7)
+    expected_returned_horizontal_spacing = 7
+    result = pngfyer.pngfy
+
+    settings_horizontal_spacing = result.settings.horizontal_spacing
+
+    assert_equal(expected_returned_horizontal_spacing, settings_horizontal_spacing)
+  end
+
+  def test_that_result_settings_set_horizontal_spacing_raises_no_method_error
+    result = pngfyer.pngfy
+
+    assert_raises(NoMethodError) do
+      result.settings.set_horizontal_spacing(2)
+    end
+  end
+
+  def test_that_result_settings_horizontal_spacing_reflects_settings_at_result_creation_time_and_not_future_changes
+    pngfyer.set_horizontal_spacing(10)
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_horizontal_spacing = oldest_settings.horizontal_spacing
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_horizontal_spacing(22)
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_horizontal_spacing = most_recent_settings.horizontal_spacing
+
+    refute_equal(oldest_horizontal_spacing, most_recent_horizontal_spacing)
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
