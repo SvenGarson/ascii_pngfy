@@ -201,7 +201,7 @@ class TestResult < Minitest::Test
     end
   end
 
-  def test_that_result_settings_font_color_reflects_settings_at_result_creation_time_and_does_not_track_future_changes
+  def test_that_result_settings_font_color_reflects_settings_at_result_creation_time_and_not_future_changes
     pngfyer.set_font_color(red: 111, green: 121, blue: 131, alpha: 141)
     oldest_result = pngfyer.pngfy
     oldest_settings = oldest_result.settings
@@ -213,7 +213,40 @@ class TestResult < Minitest::Test
     most_recent_settings = most_recent_result.settings
     most_recent_font_color = most_recent_settings.font_color
 
-    refute_equal(most_recent_font_color, oldest_font_color)
+    refute_equal(oldest_font_color, most_recent_font_color)
+  end
+
+  def test_that_result_settings_background_color_returns_the_expected_background_color_previously_set
+    pngfyer.set_background_color(red: 15, green: 208, blue: 189, alpha: 96)
+    expected_returned_background_color = AsciiPngfy::ColorRGBA.new(15, 208, 189, 96)
+    result = pngfyer.pngfy
+
+    settings_background_color = result.settings.background_color
+
+    assert_equal(expected_returned_background_color, settings_background_color)
+  end
+
+  def test_that_result_settings_set_background_color_raises_no_method_error
+    result = pngfyer.pngfy
+
+    assert_raises(NoMethodError) do
+      result.settings.set_background_color(red: 215, green: 108, blue: 62, alpha: 49)
+    end
+  end
+
+  def test_that_result_settings_background_color_reflects_settings_at_result_creation_time_and_not_future_changes
+    pngfyer.set_background_color(red: 159, green: 167, blue: 65, alpha: 255)
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_background_color = oldest_settings.background_color
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_background_color(red: 0, green: 0, blue: 0, alpha: 0)
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_background_color = most_recent_settings.background_color
+
+    refute_equal(oldest_background_color, most_recent_background_color)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
