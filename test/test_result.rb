@@ -183,7 +183,7 @@ class TestResult < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize
 
-  def test_that_result_settings_font_color_returns_the_expected_font_color_previously_set
+  def test_that_result_settings_font_color_returns_the_expected_font_color_set_previously
     pngfyer.set_font_color(red: 58, green: 249, blue: 101, alpha: 77)
     expected_returned_font_color = AsciiPngfy::ColorRGBA.new(58, 249, 101, 77)
     result = pngfyer.pngfy
@@ -216,7 +216,7 @@ class TestResult < Minitest::Test
     refute_equal(oldest_font_color, most_recent_font_color)
   end
 
-  def test_that_result_settings_background_color_returns_the_expected_background_color_previously_set
+  def test_that_result_settings_background_color_returns_the_expected_background_color_set_previously
     pngfyer.set_background_color(red: 15, green: 208, blue: 189, alpha: 96)
     expected_returned_background_color = AsciiPngfy::ColorRGBA.new(15, 208, 189, 96)
     result = pngfyer.pngfy
@@ -247,6 +247,39 @@ class TestResult < Minitest::Test
     most_recent_background_color = most_recent_settings.background_color
 
     refute_equal(oldest_background_color, most_recent_background_color)
+  end
+
+  def test_that_result_settings_font_height_returns_the_expected_font_height_set_previously
+    pngfyer.set_font_height(81)
+    expected_returned_font_height = 81
+    result = pngfyer.pngfy
+
+    settings_font_height = result.settings.font_height
+
+    assert_equal(expected_returned_font_height, settings_font_height)
+  end
+
+  def test_that_result_settings_set_font_height_raises_no_method_error
+    result = pngfyer.pngfy
+
+    assert_raises(NoMethodError) do
+      result.settings.set_font_height(27)
+    end
+  end
+
+  def test_that_result_settings_font_height_reflects_settings_at_result_creation_time_and_not_future_changes
+    pngfyer.set_font_height(18)
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_font_height = oldest_settings.font_height
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_font_height(45)
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_font_height = most_recent_settings.font_height
+
+    refute_equal(oldest_font_height, most_recent_font_height)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
