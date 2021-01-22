@@ -347,5 +347,38 @@ class TestResult < Minitest::Test
 
     refute_equal(oldest_vertical_spacing, most_recent_vertical_spacing)
   end
+
+  def test_that_result_settings_text_returns_the_expected_text_set_previously
+    pngfyer.set_text('Drama, baby!')
+    expected_returned_text = 'Drama, baby!'
+    result = pngfyer.pngfy
+
+    settings_text = result.settings.text
+
+    assert_equal(expected_returned_text, settings_text)
+  end
+
+  def test_that_result_settings_set_text_raises_no_method_error
+    result = pngfyer.pngfy
+
+    assert_raises(NoMethodError) do
+      result.settings.set_text('Whats up doc?')
+    end
+  end
+
+  def test_that_result_settings_text_reflects_settings_at_result_creation_time_and_not_future_changes
+    pngfyer.set_text('Why so serious?')
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_text = oldest_settings.text
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_text('That is none of your business!')
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_text = most_recent_settings.text
+
+    refute_equal(oldest_text, most_recent_text)
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
