@@ -314,5 +314,38 @@ class TestResult < Minitest::Test
 
     refute_equal(oldest_horizontal_spacing, most_recent_horizontal_spacing)
   end
+
+  def test_that_result_settings_vertical_spacing_returns_the_expected_vertical_spacing_set_previously
+    pngfyer.set_vertical_spacing(3)
+    expected_returned_vertical_spacing = 3
+    result = pngfyer.pngfy
+
+    settings_vertical_spacing = result.settings.vertical_spacing
+
+    assert_equal(expected_returned_vertical_spacing, settings_vertical_spacing)
+  end
+
+  def test_that_result_settings_set_vertical_spacing_raises_no_method_error
+    result = pngfyer.pngfy
+
+    assert_raises(NoMethodError) do
+      result.settings.set_vertical_spacing(0)
+    end
+  end
+
+  def test_that_result_settings_vertical_spacing_reflects_settings_at_result_creation_time_and_not_future_changes
+    pngfyer.set_vertical_spacing(1)
+    oldest_result = pngfyer.pngfy
+    oldest_settings = oldest_result.settings
+    oldest_vertical_spacing = oldest_settings.vertical_spacing
+
+    # the following setting changes and result creation should not affect the previous result in any way
+    pngfyer.set_vertical_spacing(5)
+    most_recent_result = pngfyer.pngfy
+    most_recent_settings = most_recent_result.settings
+    most_recent_vertical_spacing = most_recent_settings.vertical_spacing
+
+    refute_equal(oldest_vertical_spacing, most_recent_vertical_spacing)
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
