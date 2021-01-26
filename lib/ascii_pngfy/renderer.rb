@@ -10,14 +10,13 @@ module AsciiPngfy
 
     def render_result
       # return Result object
-      render_height = 93
       png = ChunkyPNG::Image.new(
         determine_png_width,
         determine_png_height,
         ChunkyPNG::Color::TRANSPARENT
       )
 
-      Result.new(png, determine_png_render_width, render_height, settings)
+      Result.new(png, determine_render_width, determine_render_height, settings)
     end
 
     private
@@ -43,8 +42,12 @@ module AsciiPngfy
       settings.font_height / 9
     end
 
-    def determine_png_render_width
+    def determine_render_width
       determine_png_width * determine_font_multiplier
+    end
+
+    def determine_render_height
+      determine_png_height * determine_font_multiplier
     end
 
     attr_accessor(:settings)

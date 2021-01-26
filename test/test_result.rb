@@ -557,6 +557,76 @@ class TestResult < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize
 
+  def test_that_result_render_height_returns_expected_height_for_single_character_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_font_height = 9 * rand(1..100)
+    random_vertical_spacing = rand(0..10)
+    random_single_char_text = supported_ascii_characters_without_newline.sample
+    expected_render_height = expected_render_height(
+      random_single_char_text,
+      random_vertical_spacing,
+      random_font_height
+    )
+
+    pngfyer.set_font_height(random_font_height)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_char_text)
+
+    render_height = pngfyer.pngfy.render_height
+
+    assert_equal(expected_render_height, render_height)
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def test_that_result_render_height_returns_expected_height_for_single_line_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_font_height = 9 * rand(1..100)
+    random_vertical_spacing = rand(0..10)
+    random_single_line_text = supported_ascii_characters_without_newline.shuffle.join
+    expected_render_height = expected_render_height(
+      random_single_line_text,
+      random_vertical_spacing,
+      random_font_height
+    )
+
+    pngfyer.set_font_height(random_font_height)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_line_text)
+
+    render_height = pngfyer.pngfy.render_height
+
+    assert_equal(expected_render_height, render_height)
+  end
+
+  def test_that_result_render_height_returns_expected_height_for_multi_line_text_that_contains_empty_lines
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_font_height = 9 * rand(1..100)
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    expected_render_height = expected_render_height(
+      random_multi_line_text_with_empty_lines,
+      random_vertical_spacing,
+      random_font_height
+    )
+
+    pngfyer.set_font_height(random_font_height)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    render_height = pngfyer.pngfy.render_height
+
+    assert_equal(expected_render_height, render_height)
+  end
+  # rubocop:enable Metrics/AbcSize
+
   private
 
   def random_and_shuffled_supported_character_string_without_newlines
@@ -588,10 +658,18 @@ class TestResult < Minitest::Test
     (text_line_count * 9) + (vertical_spacing_count * vertical_spacing)
   end
 
+  def font_height_multiplier(font_height)
+    font_height / 9
+  end
+
   def expected_render_width(text, horizontal_spacing, font_height)
     png_width = expected_png_width(text, horizontal_spacing)
-    font_height_multiplier = font_height / 9
-    png_width * font_height_multiplier
+    png_width * font_height_multiplier(font_height)
+  end
+
+  def expected_render_height(text, vertical_spacing, font_height)
+    png_height = expected_png_height(text, vertical_spacing)
+    png_height * font_height_multiplier(font_height)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
