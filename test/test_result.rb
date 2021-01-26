@@ -6,11 +6,13 @@ require_relative 'testing_prerequisites'
 class TestResult < Minitest::Test
   attr_reader(
     :pngfyer,
+    :supported_ascii_characters,
     :supported_ascii_characters_without_newline
   )
 
   def setup
     @pngfyer = AsciiPngfy::Pngfyer.new
+    @supported_ascii_characters = ([10] + (32..126).to_a).map(&:chr)
     @supported_ascii_characters_without_newline = (32..126).to_a.map(&:chr)
   end
 
@@ -413,7 +415,34 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_width, png_width)
   end
 
+  def test_that_result_png_width_returns_expected_width_for_multi_line_text_with_leading_trailing_and_center_empty_lines
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    expected_png_width = expected_png_width(random_multi_line_text_with_empty_lines, random_horizontal_spacing)
+
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    png_width = pngfyer.pngfy.png.width
+
+    assert_equal(expected_png_width, png_width)
+  end
+
   private
+
+  def random_and_shuffled_supported_character_string_without_newlines
+    random_length = rand(1..supported_ascii_characters.size)
+    supported_ascii_characters_without_newline.sample(random_length).shuffle.join
+  end
 
   def text_lines(text)
     text.split("\n", -1)
