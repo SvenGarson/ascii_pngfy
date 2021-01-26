@@ -4,10 +4,14 @@ require_relative 'testing_prerequisites'
 
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength
 class TestResult < Minitest::Test
-  attr_reader(:pngfyer)
+  attr_reader(
+    :pngfyer,
+    :supported_ascii_characters_without_newline
+  )
 
   def setup
     @pngfyer = AsciiPngfy::Pngfyer.new
+    @supported_ascii_characters_without_newline = (32..126).to_a.map(&:chr)
   end
 
   def test_that_result_png_returns_chunky_png_image_instance
@@ -379,6 +383,52 @@ class TestResult < Minitest::Test
     most_recent_text = most_recent_result.settings.text
 
     refute_equal(oldest_text, most_recent_text)
+  end
+
+  def test_that_result_png_width_returns_expected_width_for_single_character_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_single_char_text = supported_ascii_characters_without_newline.sample
+    expected_png_width = expected_png_width(random_single_char_text, random_horizontal_spacing)
+
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_text(random_single_char_text)
+
+    png_width = pngfyer.pngfy.png.width
+
+    assert_equal(expected_png_width, png_width)
+  end
+
+  def test_that_result_png_width_returns_expected_width_for_single_line_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_single_line_text = supported_ascii_characters_without_newline.shuffle.join
+    expected_png_width = expected_png_width(random_single_line_text, random_horizontal_spacing)
+
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_text(random_single_line_text)
+
+    png_width = pngfyer.pngfy.png.width
+
+    assert_equal(expected_png_width, png_width)
+  end
+
+  private
+
+  def text_lines(text)
+    text.split("\n", -1)
+  end
+
+  def longest_line_length(text_lines)
+    text_lines.max_by(&:length).length
+  end
+
+  def expected_png_width(text, horizontal_spacing)
+    text_lines = text_lines(text)
+    longest_line_length = longest_line_length(text_lines)
+    horizontal_spacing_count = longest_line_length - 1
+
+    (longest_line_length * 5) + (horizontal_spacing_count * horizontal_spacing)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
