@@ -9,18 +9,8 @@ module AsciiPngfy
     end
 
     def render_result
-      # common data points
-      text_lines = settings.text.split("\n", -1) 
-
-      # png width
-      longest_text_line_length = text_lines.max_by(&:length).length
-      horizontal_spacing_count = longest_text_line_length - 1
-      png_width = (longest_text_line_length * 5) + (horizontal_spacing_count * settings.horizontal_spacing)
-
-      # png height
-      text_line_count = text_lines.size
-      vertical_spacing_count = text_line_count - 1
-      png_height = (text_line_count * 9) + (vertical_spacing_count * settings.vertical_spacing)
+      png_width = determine_png_width(settings.text, settings.horizontal_spacing)
+      png_height = determine_png_height(settings.text, settings.vertical_spacing)
 
       # return Result object
       png = ChunkyPNG::Image.new(png_width, png_height, ChunkyPNG::Color::TRANSPARENT)
@@ -31,6 +21,24 @@ module AsciiPngfy
     end
 
     private
+
+    def text_lines(text)
+      text.split("\n", -1)
+    end
+
+    def determine_png_width(text, horizontal_spacing)
+      text_lines = text_lines(text)
+      longest_text_line_length = text_lines.max_by(&:length).length
+      horizontal_spacing_count = longest_text_line_length - 1
+
+      (longest_text_line_length * 5) + (horizontal_spacing_count * horizontal_spacing)
+    end
+
+    def determine_png_height(text, vertical_spacing)
+      text_line_count = text_lines(text).size
+      vertical_spacing_count = text_line_count - 1
+      (text_line_count * 9) + (vertical_spacing_count * vertical_spacing)
+    end
 
     attr_accessor(:settings)
   end

@@ -415,7 +415,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_width, png_width)
   end
 
-  def test_that_result_png_width_returns_expected_width_for_multi_line_text_with_leading_trailing_and_center_empty_lines
+  def test_that_result_png_width_returns_expected_width_for_multi_line_text_that_contains_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_horizontal_spacing = rand(0..10)
     random_multi_line_text_with_empty_lines = [
@@ -465,7 +465,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_height, png_height)
   end
 
-  def test_that_result_png_height_returns_expected_height_for_multi_line_text_with_leading_trailing_and_center_empty_lines
+  def test_that_result_png_height_returns_expected_height_for_multi_line_text_that_contains_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_vertical_spacing = rand(0..10)
     random_multi_line_text_with_empty_lines = [
