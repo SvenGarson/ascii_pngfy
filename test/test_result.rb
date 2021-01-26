@@ -627,6 +627,23 @@ class TestResult < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize
 
+  def test_that_result_png_contains_font_color_for_expected_font_character_regions
+    # we want to test that the png contains the font color for the regions that contain the glyph designs
+
+=begin
+  
+  > Approaching this testing problem
+    1. build a list of boxes that represent all of the font character regions
+    2. internally, render the png using a custom, full fill glyph design
+    3. scan each whole box area in the png and test that these pixels match the font color
+
+  > Coments
+    - to make sure this works, the fg should be fully opaque and the background color a color that
+      mismatches on every color component
+
+=end
+  end
+
   private
 
   def random_and_shuffled_supported_character_string_without_newlines
