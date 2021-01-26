@@ -437,6 +437,56 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_width, png_width)
   end
 
+  def test_that_result_png_height_returns_expected_height_for_single_character_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_vertical_spacing = rand(0..10)
+    random_single_char_text = supported_ascii_characters_without_newline.sample
+    expected_png_height = expected_png_height(random_single_char_text, random_vertical_spacing)
+
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_char_text)
+
+    png_height = pngfyer.pngfy.png.height
+
+    assert_equal(expected_png_height, png_height)
+  end
+
+  def test_that_result_png_height_returns_expected_height_for_single_line_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_vertical_spacing = rand(0..10)
+    random_single_line_text = supported_ascii_characters_without_newline.shuffle.join
+    expected_png_height = expected_png_height(random_single_line_text, random_vertical_spacing)
+
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_line_text)
+
+    png_height = pngfyer.pngfy.png.height
+
+    assert_equal(expected_png_height, png_height)
+  end
+
+  def test_that_result_png_height_returns_expected_height_for_multi_line_text_with_leading_trailing_and_center_empty_lines
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    expected_png_height = expected_png_height(random_multi_line_text_with_empty_lines, random_vertical_spacing)
+
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    png_height = pngfyer.pngfy.png.height
+
+    assert_equal(expected_png_height, png_height)
+  end
+
   private
 
   def random_and_shuffled_supported_character_string_without_newlines
@@ -458,6 +508,14 @@ class TestResult < Minitest::Test
     horizontal_spacing_count = longest_line_length - 1
 
     (longest_line_length * 5) + (horizontal_spacing_count * horizontal_spacing)
+  end
+
+  def expected_png_height(text, vertical_spacing)
+    text_lines = text_lines(text)
+    text_line_count = text_lines.size
+    vertical_spacing_count = text_line_count - 1
+
+    (text_line_count * 9) + (vertical_spacing_count * vertical_spacing)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
