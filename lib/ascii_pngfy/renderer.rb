@@ -5,17 +5,67 @@ module AsciiPngfy
   #   - generate result object from the Pngfyer settings
   #   - render supported characters glyph design into result png
   class SettingsRenderer
+    # Reponsibilities
+    #   - represent pixel coordinate pair as integers
+    #   - public getters for easy coordinate access
+    class Vec2i
+      attr_reader(:x, :y)
+
+      def initialize(initial_x = 0, initial_y = 0)
+        self.x = initial_x
+        self.y = initial_y
+      end
+
+      private
+
+      attr_writer(:x, :y)
+    end
+
+    # Reponsibilities
+    #   - represent an axis aligned bounding box through a minimum and
+    #     maximum coordinate coordinate pair
+    #   - public getters for easy min and max coordinate pair access
+    #   - provide a simple way to iterate all the pixel coordinates in
+    #     the respective bounding box through a closure
+    class AABB
+      attr_reader(:min, :max)
+
+      def initialize(min_x, min_y, max_x, max_y)
+        self.min = Vec2i.new(min_x, min_y)
+        self.max = Vec2i.new(max_x, max_y)
+      end
+
+      def each_pixel
+        return nil unless block_given?
+
+        min.y.upto(max.y) do |tile_y|
+          min.x.upto(max.x) do |tile_x|
+            yield(tile_x, tile_y)
+          end
+        end
+      end
+
+      private
+
+      attr_writer(:min, :max)
+    end
+
     def initialize(settings_snapshot)
       @settings = settings_snapshot
     end
 
     def render_result
+      # prep png image with background color
       png = ChunkyPNG::Image.new(
         determine_png_width,
         determine_png_height,
         ChunkyPNG::Color.rgba(255, 255, 255, 255)
       )
 
+      # plot font region into png - simply plot all and whole font regions
+      plot_font_regions_into(png)
+
+      # return the result
       Result.new(png, determine_render_width, determine_render_height, settings)
     end
 
@@ -50,6 +100,56 @@ module AsciiPngfy
 
     def determine_render_height
       determine_png_height * determine_font_multiplier
+    end
+
+    def text_lines_characters
+      text_lines.map(&:chars)
+    end
+
+    def determine_font_region(character_column_index, character_row_index)
+      font_region_top_left_x = character_column_index * (settings.horizontal_spacing + 5)
+      font_region_top_left_y = character_row_index * (settings.vertical_spacing + 9)
+      font_region_bottom_right_x = font_region_top_left_x + (5 - 1)
+      font_region_bottom_right_y = font_region_top_left_y + (9 - 1)
+
+      AABB.new(
+        font_region_top_left_x,
+        font_region_top_left_y,
+        font_region_bottom_right_x,
+        font_region_bottom_right_y
+      )
+    end
+
+    def generate_font_regions
+      font_regions = []
+
+      text_lines_characters.each_with_index do |line_characters, row_index|
+        line_characters.each_with_index do |_character, column_index|
+          font_regions << determine_font_region(column_index, row_index)
+        end
+      end
+
+      font_regions
+    end
+
+    def font_color_as_chunky_png_integer
+      font_color = settings.font_color
+      ChunkyPNG::Color.rgba(
+        font_color.red,
+        font_color.green,
+        font_color.blue,
+        font_color.alpha
+      )
+    end
+
+    def plot_font_regions_into(png)
+      font_color_as_integer = font_color_as_chunky_png_integer
+
+      generate_font_regions.each do |font_region|
+        font_region.each_pixel do |font_region_x, font_region_y|
+          png[font_region_x, font_region_y] = font_color_as_integer
+        end
+      end
     end
   end
 end

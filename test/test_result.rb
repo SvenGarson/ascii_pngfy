@@ -665,12 +665,13 @@ class TestResult < Minitest::Test
     assert_equal(expected_render_height, render_height)
   end
 
-  def test_that_result_png_contains_settings_font_color_for_expected_font_character_regions_for_single_character_text
+  def test_that_result_png_contains_settings_font_color_in_font_character_regions_for_single_character_text
     # set only the most relevant settings to a biased, reasonable and expected value
     random_horizontal_spacing = rand(0..10)
     random_vertical_spacing = rand(0..10)
     random_single_char_text = supported_ascii_characters_without_newline.sample
 
+    # background color components should contrast the font color components
     pngfyer.set_font_color(red: 255, green: 255, blue: 255, alpha: 255)
     pngfyer.set_background_color(red: 11, green: 22, blue: 33, alpha: 44)
     pngfyer.set_horizontal_spacing(random_horizontal_spacing)
@@ -681,8 +682,37 @@ class TestResult < Minitest::Test
     settings = result.settings
     png = result.png
 
-    font_regions = generate_font_regions(random_single_char_text, random_horizontal_spacing, random_vertical_spacing)
-    expected_font_color_as_integer = color_rgba_to_chunky_png_color(settings.font_color)
+    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+
+    font_regions.each do |font_region|
+      font_region.each_pixel do |font_region_x, font_region_y|
+        png_pixel_color_as_integer = png[font_region_x, font_region_y]
+
+        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
+      end
+    end
+  end
+
+  def test_that_result_png_contains_settings_font_color_in_font_character_regions_for_single_line_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_single_line_text = supported_ascii_characters_without_newline.shuffle.join
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 200, green: 200, blue: 200, alpha: 255)
+    pngfyer.set_background_color(red: 6, green: 12, blue: 18, alpha: 36)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_line_text)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    png = result.png
+
+    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
 
     font_regions.each do |font_region|
       font_region.each_pixel do |font_region_x, font_region_y|
@@ -766,7 +796,7 @@ class TestResult < Minitest::Test
     font_regions
   end
 
-  def color_rgba_to_chunky_png_color(color_rgba)
+  def color_rgba_to_chunky_png_color_integer(color_rgba)
     ChunkyPNG::Color.rgba(color_rgba.red, color_rgba.green, color_rgba.blue, color_rgba.alpha)
   end
 end
