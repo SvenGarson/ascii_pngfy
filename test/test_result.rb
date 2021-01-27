@@ -454,7 +454,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_width, png_width)
   end
 
-  def test_that_result_png_width_returns_expected_width_for_multi_line_text_that_contains_empty_lines
+  def test_that_result_png_width_returns_expected_width_for_multi_line_text_with_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_horizontal_spacing = rand(0..10)
     random_multi_line_text_with_empty_lines = [
@@ -504,7 +504,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_png_height, png_height)
   end
 
-  def test_that_result_png_height_returns_expected_height_for_multi_line_text_that_contains_empty_lines
+  def test_that_result_png_height_returns_expected_height_for_multi_line_text_with_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_vertical_spacing = rand(0..10)
     random_multi_line_text_with_empty_lines = [
@@ -567,7 +567,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_render_width, render_width)
   end
 
-  def test_that_result_render_width_returns_expected_width_for_multi_line_text_that_contains_empty_lines
+  def test_that_result_render_width_returns_expected_width_for_multi_line_text_with_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_font_height = 9 * rand(1..100)
     random_horizontal_spacing = rand(0..10)
@@ -637,7 +637,7 @@ class TestResult < Minitest::Test
     assert_equal(expected_render_height, render_height)
   end
 
-  def test_that_result_render_height_returns_expected_height_for_multi_line_text_that_contains_empty_lines
+  def test_that_result_render_height_returns_expected_height_for_multi_line_text_with_empty_lines
     # set only the most relevant settings to a biased, reasonable and expected value
     random_font_height = 9 * rand(1..100)
     random_vertical_spacing = rand(0..10)
@@ -721,6 +721,44 @@ class TestResult < Minitest::Test
         assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
       end
     end
+  end
+
+  def test_that_result_png_contains_settings_font_color_in_font_character_regions_for_multi_line_text_with_empty_lines
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 200, green: 200, blue: 200, alpha: 255)
+    pngfyer.set_background_color(red: 2, green: 4, blue: 8, alpha: 10)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    png = result.png
+
+    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+
+    font_regions.each do |font_region|
+      font_region.each_pixel do |font_region_x, font_region_y|
+        png_pixel_color_as_integer = png[font_region_x, font_region_y]
+
+        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
+      end
+    end
+
+    png.save("#{__dir__}/../dev/pngs/multi_line_vis.png", interlaced: true)
   end
   # rubocop:enable Metrics/AbcSize
 
