@@ -1,9 +1,48 @@
 # frozen_string_literal: true
 
 require_relative 'testing_prerequisites'
+require 'chunky_png'
 
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength
 class TestResult < Minitest::Test
+  module Helpers
+    class Vec2i
+      attr_accessor(:x, :y)
+
+      def initialize(initial_x = 0, initial_y = 0)
+        self.x = initial_x
+        self.y = initial_y
+      end
+
+      def to_s
+        "[#{x}, #{y}]"
+      end
+    end
+
+    class AABB
+      attr_reader(:min, :max)
+
+      def initialize(min_x, min_y, max_x, max_y)
+        @min = Vec2i.new(min_x, min_y)
+        @max = Vec2i.new(max_x, max_y)
+      end
+
+      def each_pixel
+        return nil unless block_given?
+
+        min.y.upto(max.y) do |tile_y|
+          min.x.upto(max.x) do |tile_x|
+            yield(tile_x, tile_y)
+          end
+        end
+      end
+
+      def to_s
+        "min = #{min} max = #{max}"
+      end
+    end
+  end
+
   attr_reader(
     :pngfyer,
     :supported_ascii_characters,
@@ -625,24 +664,35 @@ class TestResult < Minitest::Test
 
     assert_equal(expected_render_height, render_height)
   end
-  # rubocop:enable Metrics/AbcSize
 
-  def test_that_result_png_contains_font_color_for_expected_font_character_regions
-    # we want to test that the png contains the font color for the regions that contain the glyph designs
+  def test_that_result_png_contains_settings_font_color_for_expected_font_character_regions_for_single_character_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_single_char_text = supported_ascii_characters_without_newline.sample
 
-=begin
-  
-  > Approaching this testing problem
-    1. build a list of boxes that represent all of the font character regions
-    2. internally, render the png using a custom, full fill glyph design
-    3. scan each whole box area in the png and test that these pixels match the font color
+    pngfyer.set_font_color(red: 255, green: 255, blue: 255, alpha: 255)
+    pngfyer.set_background_color(red: 11, green: 22, blue: 33, alpha: 44)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_char_text)
 
-  > Coments
-    - to make sure this works, the fg should be fully opaque and the background color a color that
-      mismatches on every color component
+    result = pngfyer.pngfy
+    settings = result.settings
+    png = result.png
 
-=end
+    font_regions = generate_font_regions(random_single_char_text, random_horizontal_spacing, random_vertical_spacing)
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color(settings.font_color)
+
+    font_regions.each do |font_region|
+      font_region.each_pixel do |font_region_x, font_region_y|
+        png_pixel_color_as_integer = png[font_region_x, font_region_y]
+
+        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
+      end
+    end
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 
@@ -687,6 +737,37 @@ class TestResult < Minitest::Test
   def expected_render_height(text, vertical_spacing, font_height)
     png_height = expected_png_height(text, vertical_spacing)
     png_height * font_height_multiplier(font_height)
+  end
+
+  def text_lines_characters(text)
+    text_lines(text).map(&:chars)
+  end
+
+  def generate_font_regions(text, horizontal_spacing, vertical_spacing)
+    font_regions = []
+    text_lines_characters = text_lines_characters(text)
+
+    text_lines_characters.each_with_index do |line_characters, row_index|
+      line_characters.each_with_index do |_character, column_index|
+        font_region_top_left_x = column_index * (horizontal_spacing + 5)
+        font_region_top_left_y = row_index * (vertical_spacing + 9)
+        font_region_bottom_right_x = font_region_top_left_x + (5 - 1)
+        font_region_bottom_right_y = font_region_top_left_y + (9 - 1)
+
+        font_regions << Helpers::AABB.new(
+          font_region_top_left_x,
+          font_region_top_left_y,
+          font_region_bottom_right_x,
+          font_region_bottom_right_y
+        )
+      end
+    end
+
+    font_regions
+  end
+
+  def color_rgba_to_chunky_png_color(color_rgba)
+    ChunkyPNG::Color.rgba(color_rgba.red, color_rgba.green, color_rgba.blue, color_rgba.alpha)
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength

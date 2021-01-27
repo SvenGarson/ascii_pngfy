@@ -3,23 +3,25 @@
 module AsciiPngfy
   # Reponsibilities
   #   - generate result object from the Pngfyer settings
+  #   - render supported characters glyph design into result png
   class SettingsRenderer
     def initialize(settings_snapshot)
       @settings = settings_snapshot
     end
 
     def render_result
-      # return Result object
       png = ChunkyPNG::Image.new(
         determine_png_width,
         determine_png_height,
-        ChunkyPNG::Color::TRANSPARENT
+        ChunkyPNG::Color.rgba(255, 255, 255, 255)
       )
 
       Result.new(png, determine_render_width, determine_render_height, settings)
     end
 
     private
+
+    attr_accessor(:settings)
 
     def text_lines
       settings.text.split("\n", -1)
@@ -49,7 +51,5 @@ module AsciiPngfy
     def determine_render_height
       determine_png_height * determine_font_multiplier
     end
-
-    attr_accessor(:settings)
   end
 end
