@@ -37,6 +37,10 @@ class TestResult < Minitest::Test
         end
       end
 
+      def overlaps_coordinates?(some_x, some_y)
+        (min.x..max.x).cover?(some_x) && (min.y..max.y).cover?(some_y)
+      end
+
       def to_s
         "min = #{min} max = #{max}"
       end
@@ -680,17 +684,18 @@ class TestResult < Minitest::Test
 
     result = pngfyer.pngfy
     settings = result.settings
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
     png = result.png
 
-    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
-    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+    font_region_pixel_color_enum = each_font_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
 
-    font_regions.each do |font_region|
-      font_region.each_pixel do |font_region_x, font_region_y|
-        png_pixel_color_as_integer = png[font_region_x, font_region_y]
-
-        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
-      end
+    font_region_pixel_color_enum.each do |_font_pixel_x, _font_pixel_y, font_pixel_color_as_integer|
+      assert_equal(expected_font_color_as_integer, font_pixel_color_as_integer)
     end
   end
 
@@ -709,17 +714,18 @@ class TestResult < Minitest::Test
 
     result = pngfyer.pngfy
     settings = result.settings
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
     png = result.png
 
-    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
-    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+    font_region_pixel_color_enum = each_font_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
 
-    font_regions.each do |font_region|
-      font_region.each_pixel do |font_region_x, font_region_y|
-        png_pixel_color_as_integer = png[font_region_x, font_region_y]
-
-        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
-      end
+    font_region_pixel_color_enum.each do |_font_pixel_x, _font_pixel_y, font_pixel_color_as_integer|
+      assert_equal(expected_font_color_as_integer, font_pixel_color_as_integer)
     end
   end
 
@@ -745,20 +751,49 @@ class TestResult < Minitest::Test
 
     result = pngfyer.pngfy
     settings = result.settings
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
     png = result.png
 
-    font_regions = generate_font_regions(settings.text, settings.horizontal_spacing, settings.vertical_spacing)
-    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+    font_region_pixel_color_enum = each_font_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
 
-    font_regions.each do |font_region|
-      font_region.each_pixel do |font_region_x, font_region_y|
-        png_pixel_color_as_integer = png[font_region_x, font_region_y]
-
-        assert_equal(expected_font_color_as_integer, png_pixel_color_as_integer)
-      end
+    font_region_pixel_color_enum.each do |_font_pixel_x, _font_pixel_y, font_pixel_color_as_integer|
+      assert_equal(expected_font_color_as_integer, font_pixel_color_as_integer)
     end
+  end
 
-    png.save("#{__dir__}/../dev/pngs/multi_line_vis.png", interlaced: true)
+  def test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_single_character_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_single_char_text = supported_ascii_characters_without_newline.sample
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 255, green: 255, blue: 255, alpha: 255)
+    pngfyer.set_background_color(red: 11, green: 22, blue: 33, alpha: 44)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_char_text)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    expected_background_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.background_color)
+    png = result.png
+
+    background_region_pixel_color_enum = each_background_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
+
+    background_region_pixel_color_enum.each do |_bg_pixel_x, _bg_pixel_y, background_pixel_color_as_integer|
+      assert_equal(expected_background_color_as_integer, background_pixel_color_as_integer)
+    end
   end
   # rubocop:enable Metrics/AbcSize
 
@@ -836,6 +871,43 @@ class TestResult < Minitest::Test
 
   def color_rgba_to_chunky_png_color_integer(color_rgba)
     ChunkyPNG::Color.rgba(color_rgba.red, color_rgba.green, color_rgba.blue, color_rgba.alpha)
+  end
+
+  def each_font_region_pixel_with_color_enumerator(text, horizontal_spacing, vertical_spacing, png)
+    font_regions = generate_font_regions(text, horizontal_spacing, vertical_spacing)
+
+    Enumerator.new do |yielder|
+      font_regions.each do |font_region|
+        font_region.each_pixel do |font_pixel_x, font_pixel_y|
+          font_region_pixel_color_as_integer = png[font_pixel_x, font_pixel_y]
+
+          yielder << [font_pixel_x, font_pixel_y, font_region_pixel_color_as_integer]
+        end
+      end
+    end
+  end
+
+  def each_background_region_pixel_with_color_enumerator(text, horizontal_spacing, vertical_spacing, png)
+    # to determine background pixels, naively iterate through each png pixel and ignore each pixel
+    # that overlaps with any of the determined font regions so the bacground pixels are essentially
+    # computed as: background region = (png region - font regions)
+
+    font_regions = generate_font_regions(text, horizontal_spacing, vertical_spacing)
+    png_region = Helpers::AABB.new(0, 0, png.width - 1, png.height - 1)
+
+    Enumerator.new do |yielder|
+      png_region.each_pixel do |png_pixel_x, png_pixel_y|
+        # the png region coordinates are not background if the coordinates overlap any font region
+        is_background_pixel = font_regions.none? do |font_region|
+          font_region.overlaps_coordinates?(png_pixel_x, png_pixel_y)
+        end
+
+        next unless is_background_pixel
+
+        background_region_pixel_color_as_integer = png[png_pixel_x, png_pixel_y]
+        yielder << [png_pixel_x, png_pixel_y, background_region_pixel_color_as_integer]
+      end
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
