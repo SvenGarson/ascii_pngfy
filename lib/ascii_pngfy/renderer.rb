@@ -59,7 +59,7 @@ module AsciiPngfy
       png = ChunkyPNG::Image.new(
         determine_png_width,
         determine_png_height,
-        ChunkyPNG::Color.rgba(255, 255, 255, 255)
+        color_rgba_to_chunky_png_integer(settings.background_color)
       )
 
       # plot font region into png - simply plot all and whole font regions
@@ -132,18 +132,17 @@ module AsciiPngfy
       font_regions
     end
 
-    def font_color_as_chunky_png_integer
-      font_color = settings.font_color
+    def color_rgba_to_chunky_png_integer(color_rgba)
       ChunkyPNG::Color.rgba(
-        font_color.red,
-        font_color.green,
-        font_color.blue,
-        font_color.alpha
+        color_rgba.red,
+        color_rgba.green,
+        color_rgba.blue,
+        color_rgba.alpha
       )
     end
 
     def plot_font_regions_into(png)
-      font_color_as_integer = font_color_as_chunky_png_integer
+      font_color_as_integer = color_rgba_to_chunky_png_integer(settings.font_color)
 
       generate_font_regions.each do |font_region|
         font_region.each_pixel do |font_region_x, font_region_y|

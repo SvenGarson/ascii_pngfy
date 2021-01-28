@@ -795,7 +795,75 @@ class TestResult < Minitest::Test
       assert_equal(expected_background_color_as_integer, background_pixel_color_as_integer)
     end
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_single_line_text
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_single_line_text = supported_ascii_characters_without_newline.shuffle.join
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 200, green: 200, blue: 200, alpha: 255)
+    pngfyer.set_background_color(red: 6, green: 12, blue: 18, alpha: 36)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_single_line_text)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    expected_background_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.background_color)
+    png = result.png
+
+    background_region_pixel_color_enum = each_background_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
+
+    background_region_pixel_color_enum.each do |_bg_pixel_x, _bg_pixel_y, background_pixel_color_as_integer|
+      assert_equal(expected_background_color_as_integer, background_pixel_color_as_integer)
+    end
+  end
+
+  # rubocop:disable Layout/LineLength
+  def test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_multi_line_text_with_empty_lines
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 200, green: 200, blue: 200, alpha: 255)
+    pngfyer.set_background_color(red: 2, green: 4, blue: 8, alpha: 10)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    expected_background_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.background_color)
+    png = result.png
+
+    background_region_pixel_color_enum = each_background_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
+
+    background_region_pixel_color_enum.each do |_bg_pixel_x, _bg_pixel_y, background_pixel_color_as_integer|
+      assert_equal(expected_background_color_as_integer, background_pixel_color_as_integer)
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Layout/LineLength
 
   private
 
