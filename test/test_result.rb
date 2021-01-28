@@ -766,6 +766,81 @@ class TestResult < Minitest::Test
     end
   end
 
+  def test_that_result_png_contains_settings_font_color_in_font_character_regions_when_font_color_fully_opaque
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 75, green: 150, blue: 225, alpha: 255)
+    pngfyer.set_background_color(red: 15, green: 25, blue: 35, alpha: 125)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(settings.font_color)
+    png = result.png
+
+    font_region_pixel_color_enum = each_font_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
+
+    font_region_pixel_color_enum.each do |_font_pixel_x, _font_pixel_y, font_pixel_color_as_integer|
+      assert_equal(expected_font_color_as_integer, font_pixel_color_as_integer)
+    end
+  end
+
+  def test_that_result_png_contains_alpha_composited_color_in_font_character_regions_when_font_color_transparent
+    # set only the most relevant settings to a biased, reasonable and expected value
+    random_horizontal_spacing = rand(0..10)
+    random_vertical_spacing = rand(0..10)
+    random_multi_line_text_with_empty_lines = [
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      '',
+      random_and_shuffled_supported_character_string_without_newlines,
+      random_and_shuffled_supported_character_string_without_newlines,
+      ''
+    ].join("\n")
+
+    # background color components should contrast the font color components
+    pngfyer.set_font_color(red: 0, green: 255, blue: 0, alpha: 153)
+    pngfyer.set_background_color(red: 255, green: 0, blue: 0, alpha: 255)
+    pngfyer.set_horizontal_spacing(random_horizontal_spacing)
+    pngfyer.set_vertical_spacing(random_vertical_spacing)
+    pngfyer.set_text(random_multi_line_text_with_empty_lines)
+
+    result = pngfyer.pngfy
+    settings = result.settings
+    expected_color = color_rgba_alpha_composite(settings.font_color, settings.background_color)
+    expected_font_color_as_integer = color_rgba_to_chunky_png_color_integer(expected_color)
+    png = result.png
+
+    font_region_pixel_color_enum = each_font_region_pixel_with_color_enumerator(
+      settings.text,
+      settings.horizontal_spacing,
+      settings.vertical_spacing,
+      png
+    )
+
+    font_region_pixel_color_enum.each do |_font_pixel_x, _font_pixel_y, font_pixel_color_as_integer|
+      assert_equal(expected_font_color_as_integer, font_pixel_color_as_integer)
+    end
+  end
+
   def test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_single_character_text
     # set only the most relevant settings to a biased, reasonable and expected value
     random_horizontal_spacing = rand(0..10)
@@ -976,6 +1051,41 @@ class TestResult < Minitest::Test
         yielder << [png_pixel_x, png_pixel_y, background_region_pixel_color_as_integer]
       end
     end
+  end
+
+  def straight_alpha_color_composition(over_component, over_alpha, under_component, under_alpha)
+    # assume that both component and alpha values are passed in the range (0..255)
+    # make sure to interpret the algorithm correctly with regards to rounding errors
+    # scaling color component values by floats and then converting back to integers gives
+    # bad accuracy of the actual composited color component value as a lot of information
+    # is potentially lost because of discarded color component fractions
+    ca = over_component
+    aa = over_alpha.fdiv(255)
+    cb = under_component
+    ab = under_alpha.fdiv(255)
+
+    # color component result as integer in range 0..255
+    ((ca * aa + cb * ab * (1 - aa)) / (aa + ab * (1 - aa))).to_i
+  end
+
+  def straight_alpha_transparency_composition(over_alpha, under_alpha)
+    aa = over_alpha.fdiv(255)
+    ab = under_alpha.fdiv(255)
+
+    # alpha commponent result as integer in range 0..255
+    ((aa + ab * (1 - aa)) * 255).to_i
+  end
+
+  def color_rgba_alpha_composite(over_color, under_color)
+    over_color_alpha = over_color.alpha
+    under_color_alpha = under_color.alpha
+
+    AsciiPngfy::ColorRGBA.new(
+      straight_alpha_color_composition(over_color.red, over_color_alpha, under_color.red, under_color_alpha),
+      straight_alpha_color_composition(over_color.green, over_color_alpha, under_color.green, under_color_alpha),
+      straight_alpha_color_composition(over_color.blue, over_color_alpha, under_color.blue, under_color_alpha),
+      straight_alpha_transparency_composition(over_color_alpha, under_color_alpha)
+    )
   end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength

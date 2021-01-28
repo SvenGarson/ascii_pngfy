@@ -141,12 +141,56 @@ module AsciiPngfy
       )
     end
 
+    def straight_alpha_composite_color_value(over_component, over_alpha, under_component, under_alpha)
+      # over refers to the top layer, i.e. the font layer
+      ca = over_component
+      aa = over_alpha.fdiv(255)
+
+      # under refers to the bottom layer, i.e. the background layer
+      cb = under_component
+      ab = under_alpha.fdiv(255)
+
+      # return alpha composited color component as integer in range 0..255
+      ((ca * aa + cb * ab * (1 - aa)) / (aa + ab * (1 - aa))).to_i
+    end
+
+    def straight_alpha_composite_alpha_value(over_alpha, under_alpha)
+      aa = over_alpha.fdiv(255)
+      ab = under_alpha.fdiv(255)
+
+      # return alpha composited alpha component as integer in range 0..255
+      ((aa + ab * (1 - aa)) * 255).to_i
+    end
+
+    def straight_alpha_composite_color(over_color, under_color)
+      over_color_alpha = over_color.alpha
+      under_color_alpha = under_color.alpha
+
+      AsciiPngfy::ColorRGBA.new(
+        straight_alpha_composite_color_value(over_color.red, over_color_alpha, under_color.red, under_color_alpha),
+        straight_alpha_composite_color_value(over_color.green, over_color_alpha, under_color.green, under_color_alpha),
+        straight_alpha_composite_color_value(over_color.blue, over_color_alpha, under_color.blue, under_color_alpha),
+        straight_alpha_composite_alpha_value(over_color_alpha, under_color_alpha)
+      )
+    end
+
+    def determine_final_font_color
+      # the font and background colors are only mixed if the font color is transparent
+      case settings.font_color.alpha
+      when 255
+        settings.font_color
+      else
+        straight_alpha_composite_color(settings.font_color, settings.background_color)
+      end
+    end
+
     def plot_font_regions_into(png)
-      font_color_as_integer = color_rgba_to_chunky_png_integer(settings.font_color)
+      final_font_color = determine_final_font_color
+      final_font_color_as_integer = color_rgba_to_chunky_png_integer(final_font_color)
 
       generate_font_regions.each do |font_region|
         font_region.each_pixel do |font_region_x, font_region_y|
-          png[font_region_x, font_region_y] = font_color_as_integer
+          png[font_region_x, font_region_y] = final_font_color_as_integer
         end
       end
     end
