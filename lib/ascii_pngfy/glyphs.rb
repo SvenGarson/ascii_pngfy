@@ -2,8 +2,10 @@
 
 module AsciiPngfy
   # Reponsibilities
-  #   - provide pixel plotting designs for all supported,
-  #     non-control ASCII characters
+  #   - provide pixel plotting designs for all supported non-control
+  #     ASCII characters
+  #   - decides which design character, '.' or '#', represents the
+  #     font layer and which represents the background layer
   module Glyphs
     DESIGNS = {
       ' ' => '#####.....#####.....#####.....#####.....#####',
@@ -102,5 +104,13 @@ module AsciiPngfy
       '}' => '#####.....#####.....#####.....#####.....#####',
       '~' => '#####.....#####.....#####.....#####.....#####'
     }.freeze
+
+    def self.is_font_layer_design_character?(some_design_character)
+      some_design_character == '#'
+    end
+
+    def self.is_background_layer_design_character?(some_design_character)
+      some_design_character == '.'
+    end
   end
 end

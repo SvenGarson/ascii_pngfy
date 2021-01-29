@@ -121,7 +121,7 @@ class TestGlyphs < Minitest::Test
       # for the usage case of this data structure this is sufficient in terms of testing because
       # this is a mistake that could potentially occur in the renderer implementation, where the
       # renderer is supposed to exclusively retrieve the character design strings from the hash
-      # and never mutate the hash in any way.
+      # and never mutate the hash in any way
       #
       # so this test case is a representation of previous tests but expressed by idiomatic ruby
       # and how this would typically be achieved by non-dynamic language features
@@ -135,5 +135,37 @@ class TestGlyphs < Minitest::Test
     assert_raises(FrozenError) do
       AsciiPngfy::Glyphs::DESIGNS[existing_character_key] = ('.' * 45).freeze
     end
+  end
+
+  def test_that_glyphs_is_font_layer_design_character_returns_true_when_argument_is_the_hash_character
+    hash_character = '#'
+
+    is_font_layer_design_character = AsciiPngfy::Glyphs.is_font_layer_design_character?(hash_character)
+
+    assert_equal(true, is_font_layer_design_character)
+  end
+
+  def test_that_glyphs_is_font_layer_design_character_returns_false_when_argument_is_not_the_hash_character
+    background_layer_design_character = '.'
+
+    is_font_layer_design_character = AsciiPngfy::Glyphs.is_font_layer_design_character?(background_layer_design_character)
+
+    assert_equal(false, is_font_layer_design_character)
+  end
+
+  def test_that_glyphs_is_background_layer_design_character_returns_true_when_argument_is_the_period_character
+    period_character = '.'
+
+    is_background_layer_design_character = AsciiPngfy::Glyphs.is_background_layer_design_character?(period_character)
+
+    assert_equal(true, is_background_layer_design_character)
+  end
+
+  def test_that_glyphs_is_background_layer_design_character_returns_false_when_argument_is_not_the_period_character
+    font_layer_design_character = '#'
+
+    is_background_layer_design_character = AsciiPngfy::Glyphs.is_background_layer_design_character?(font_layer_design_character)
+
+    assert_equal(false, is_background_layer_design_character)
   end
 end

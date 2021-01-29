@@ -940,6 +940,84 @@ class TestResult < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize, Layout/LineLength
 
+  # ===> test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_single_character_text
+  def test_that_result_png_is_5_pixels_wide_for_every_supported_non_control_character_as_single_char_text
+    supported_ascii_characters_without_newline.each do |supported_ascii_character|
+      # set only text setting per iterated supported ascii character
+      pngfyer.set_text(supported_ascii_character)
+
+      result_png = pngfyer.pngfy.png
+
+      assert_equal(5, result_png.width)
+    end
+  end
+
+  def test_that_result_png_is_9_pixels_high_for_every_supported_non_control_character_as_single_char_text
+    supported_ascii_characters_without_newline.each do |supported_ascii_character|
+      # set only text setting per iterated supported ascii character
+      pngfyer.set_text(supported_ascii_character)
+
+      result_png = pngfyer.pngfy.png
+
+      assert_equal(9, result_png.height)
+    end
+  end
+
+=begin
+ 
+  # iterate
+  for all supported non-control characters
+    set relevant settings per iteration: text -> at some point every supported character in range 32..126
+    get glyph design that is supposed to be rendered for this supported non-control char
+    
+    iterate png and design to check for every png pixel:
+      - png pixel color must be FG when design is #
+      - png pixel color must be BG when design is .
+
+    # here we just check for the explicit FG and BG color, color mixing is taken care of in
+    # other tests
+    
+=end
+
+  def test_that_result_png_pixels_mirror_the_glyph_design_precisely_for_every_supported_non_control_character
+skip
+    # to make that the glyph designs are accurately represented by the result png, we generate a
+    # result png for every single supported non-control character through a single character text
+    #
+    # this makes it easy to test that the result png contains the correct pixel data because the
+    # png and the glyph design have the same resolution of 5x9 pixels at this point
+
+    # set only the most relevant settings to a biased, reasonable and expected value that are the same
+    # for all the iterated supported characters
+    pngfyer.set_font_color(red: 0, green: 255, blue: 0, alpha: 255)
+    pngfyer.set_background_color(red: 255, green: 0, blue: 0, alpha: 255)
+
+    supported_ascii_characters_without_newline.each do |supported_ascii_character|
+      # set only text setting per iterated supported ascii character
+      pngfyer.set_text(supported_ascii_character)
+
+      glyph_design = AsciiPngfy::Glyphs::DESIGNS[supported_ascii_character]
+      png = pngfyer.pngfy.png
+
+      # check that png contents and glyph design exactly mirror each other in terms of theri different contexts
+      # use the region iteration we already implemented so we can:
+      # iterate through the whole png pixel coordinates top row to bottom row, left to right
+      # and scan the string accordingly
+      png_region = generate_png_region(png)
+      
+      glyph_design_index = 0
+      png_region.each_pixel do |png_pixel_x, png_pixel_y|
+        # test that the glpyh design characters map over correctly to the png
+        
+        # how to name the glpyh method to check if design char FG or BG
+        # Glyphs.is_font_layer_design_character?(char)
+        # Glyphs.is_background_layer_design_character?(char)
+
+        glyph_design_index += 1
+      end
+    end
+  end
+
   private
 
   def random_and_shuffled_supported_character_string_without_newlines
@@ -1030,13 +1108,17 @@ class TestResult < Minitest::Test
     end
   end
 
+  def generate_png_region(png)
+    Helpers::AABB.new(0, 0, png.width - 1, png.height - 1)
+  end
+
   def each_background_region_pixel_with_color_enumerator(text, horizontal_spacing, vertical_spacing, png)
     # to determine background pixels, naively iterate through each png pixel and ignore each pixel
     # that overlaps with any of the determined font regions so the bacground pixels are essentially
     # computed as: background region = (png region - font regions)
 
     font_regions = generate_font_regions(text, horizontal_spacing, vertical_spacing)
-    png_region = Helpers::AABB.new(0, 0, png.width - 1, png.height - 1)
+    png_region = generate_png_region(png)
 
     Enumerator.new do |yielder|
       png_region.each_pixel do |png_pixel_x, png_pixel_y|
