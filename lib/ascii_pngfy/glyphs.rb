@@ -6,6 +6,7 @@ module AsciiPngfy
   #     ASCII characters
   #   - decides which design character, '.' or '#', represents the
   #     font layer and which represents the background layer
+  # rubocop: disable Metrics/ModuleLength
   module Glyphs
     DESIGNS = {
       ' ' => '#####.....#####.....#####.....#####.....#####',
@@ -105,12 +106,13 @@ module AsciiPngfy
       '~' => '#####.....#####.....#####.....#####.....#####'
     }.freeze
 
-    def self.is_font_layer_design_character?(some_design_character)
+    def self.font_layer_design_character?(some_design_character)
       some_design_character == '#'
     end
 
-    def self.is_background_layer_design_character?(some_design_character)
+    def self.background_layer_design_character?(some_design_character)
       some_design_character == '.'
     end
   end
+  # rubocop: enable Metrics/ModuleLength
 end

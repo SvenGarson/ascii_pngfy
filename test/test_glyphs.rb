@@ -2,6 +2,7 @@
 
 require_relative 'testing_prerequisites'
 
+# rubocop: disable Metrics/ClassLength
 class TestGlyphs < Minitest::Test
   ALLOWED_GLYPH_DESIGN_CHARACTERS = %w[. #].freeze
 
@@ -137,10 +138,11 @@ class TestGlyphs < Minitest::Test
     end
   end
 
+  # rubocop:disable Minitest/AssertTruthy, Minitest/RefuteFalse
   def test_that_glyphs_is_font_layer_design_character_returns_true_when_argument_is_the_hash_character
     hash_character = '#'
 
-    is_font_layer_design_character = AsciiPngfy::Glyphs.is_font_layer_design_character?(hash_character)
+    is_font_layer_design_character = AsciiPngfy::Glyphs.font_layer_design_character?(hash_character)
 
     assert_equal(true, is_font_layer_design_character)
   end
@@ -148,7 +150,7 @@ class TestGlyphs < Minitest::Test
   def test_that_glyphs_is_font_layer_design_character_returns_false_when_argument_is_not_the_hash_character
     background_layer_design_character = '.'
 
-    is_font_layer_design_character = AsciiPngfy::Glyphs.is_font_layer_design_character?(background_layer_design_character)
+    is_font_layer_design_character = AsciiPngfy::Glyphs.font_layer_design_character?(background_layer_design_character)
 
     assert_equal(false, is_font_layer_design_character)
   end
@@ -156,7 +158,7 @@ class TestGlyphs < Minitest::Test
   def test_that_glyphs_is_background_layer_design_character_returns_true_when_argument_is_the_period_character
     period_character = '.'
 
-    is_background_layer_design_character = AsciiPngfy::Glyphs.is_background_layer_design_character?(period_character)
+    is_background_layer_design_character = AsciiPngfy::Glyphs.background_layer_design_character?(period_character)
 
     assert_equal(true, is_background_layer_design_character)
   end
@@ -164,8 +166,10 @@ class TestGlyphs < Minitest::Test
   def test_that_glyphs_is_background_layer_design_character_returns_false_when_argument_is_not_the_period_character
     font_layer_design_character = '#'
 
-    is_background_layer_design_character = AsciiPngfy::Glyphs.is_background_layer_design_character?(font_layer_design_character)
+    is_background_layer_design_character =
+      AsciiPngfy::Glyphs.background_layer_design_character?(font_layer_design_character)
 
     assert_equal(false, is_background_layer_design_character)
   end
+  # rubocop:enable Minitest/AssertTruthy, Minitest/RefuteFalse, Metrics/ClassLength
 end

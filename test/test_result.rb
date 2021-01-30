@@ -42,19 +42,21 @@ class TestResult < Minitest::Test
       end
 
       def to_s
-        "min = #{min} max = #{max}"
+        "min#{min} max#{max}"
       end
     end
   end
 
   attr_reader(
     :pngfyer,
+    :design_pngfyer,
     :supported_ascii_characters,
     :supported_ascii_characters_without_newline
   )
 
   def setup
-    @pngfyer = AsciiPngfy::Pngfyer.new
+    @pngfyer = AsciiPngfy::Pngfyer.new(use_glyph_designs: false)
+    @design_pngfyer = AsciiPngfy::Pngfyer.new
     @supported_ascii_characters = ([10] + (32..126).to_a).map(&:chr)
     @supported_ascii_characters_without_newline = (32..126).to_a.map(&:chr)
   end
@@ -940,7 +942,6 @@ class TestResult < Minitest::Test
   end
   # rubocop:enable Metrics/AbcSize, Layout/LineLength
 
-  # ===> test_that_result_png_contains_settings_background_color_outside_font_character_regions_for_single_character_text
   def test_that_result_png_is_5_pixels_wide_for_every_supported_non_control_character_as_single_char_text
     supported_ascii_characters_without_newline.each do |supported_ascii_character|
       # set only text setting per iterated supported ascii character
@@ -963,24 +964,8 @@ class TestResult < Minitest::Test
     end
   end
 
-=begin
- 
-  # iterate
-  for all supported non-control characters
-    set relevant settings per iteration: text -> at some point every supported character in range 32..126
-    get glyph design that is supposed to be rendered for this supported non-control char
-    
-    iterate png and design to check for every png pixel:
-      - png pixel color must be FG when design is #
-      - png pixel color must be BG when design is .
-
-    # here we just check for the explicit FG and BG color, color mixing is taken care of in
-    # other tests
-    
-=end
-
+  # rubocop: disable Metric/AbcSize
   def test_that_result_png_pixels_mirror_the_glyph_design_precisely_for_every_supported_non_control_character
-skip
     # to make that the glyph designs are accurately represented by the result png, we generate a
     # result png for every single supported non-control character through a single character text
     #
@@ -989,34 +974,52 @@ skip
 
     # set only the most relevant settings to a biased, reasonable and expected value that are the same
     # for all the iterated supported characters
-    pngfyer.set_font_color(red: 0, green: 255, blue: 0, alpha: 255)
-    pngfyer.set_background_color(red: 255, green: 0, blue: 0, alpha: 255)
+    design_pngfyer.set_font_color(red: 0, green: 255, blue: 0, alpha: 255)
+    design_pngfyer.set_background_color(red: 255, green: 0, blue: 0, alpha: 255)
 
     supported_ascii_characters_without_newline.each do |supported_ascii_character|
       # set only text setting per iterated supported ascii character
-      pngfyer.set_text(supported_ascii_character)
+      design_pngfyer.set_text(supported_ascii_character)
 
-      glyph_design = AsciiPngfy::Glyphs::DESIGNS[supported_ascii_character]
-      png = pngfyer.pngfy.png
+      result = design_pngfyer.pngfy
+      settings = result.settings
+      glyph_design_string = AsciiPngfy::Glyphs::DESIGNS[supported_ascii_character]
+      png = result.png
 
-      # check that png contents and glyph design exactly mirror each other in terms of theri different contexts
-      # use the region iteration we already implemented so we can:
-      # iterate through the whole png pixel coordinates top row to bottom row, left to right
-      # and scan the string accordingly
+      # check that png contents and glyph design exactly mirror each other in terms of their contexts
+      # which are the glyph design in terms of the 45 character string and the 5x9 pixel png
+      #
+      # use the region iteration we already implemented so we can iterate through the all png
+      # pixel coordinates from the top row to the bottom row, each row left to right and scan the
+      # string accordingly
+      #
+      # this way the design string can be defined so that 9 lines of 5 characters look exactly as the
+      # png is supposed to render the glyph, which means the design can be made through these strings
+      # and the design will be properly replicated in the Result#png
       png_region = generate_png_region(png)
-      
-      glyph_design_index = 0
-      png_region.each_pixel do |png_pixel_x, png_pixel_y|
-        # test that the glpyh design characters map over correctly to the png
-        
-        # how to name the glpyh method to check if design char FG or BG
-        # Glyphs.is_font_layer_design_character?(char)
-        # Glyphs.is_background_layer_design_character?(char)
 
-        glyph_design_index += 1
+      glyph_design_pixel_index = 0
+      png_region.each_pixel do |png_pixel_x, png_pixel_y|
+        png_pixel_color_as_integer = png[png_pixel_x, png_pixel_y]
+
+        # test that the glyph design characters map over correctly to the png
+        glyph_design_pixel_character = glyph_design_string[glyph_design_pixel_index]
+        glyph_design_pixel_index += 1
+
+        # decide which color to expect in png based on wether glyph design pixel character is font or background layer
+        expected_png_pixel_color =
+          if AsciiPngfy::Glyphs.font_layer_design_character?(glyph_design_pixel_character)
+            settings.font_color
+          elsif AsciiPngfy::Glyphs.background_layer_design_character?(glyph_design_pixel_character)
+            settings.background_color
+          end
+        expected_png_pixel_color_as_integer = color_rgba_to_chunky_png_color_integer(expected_png_pixel_color)
+
+        assert_equal(expected_png_pixel_color_as_integer, png_pixel_color_as_integer)
       end
     end
   end
+  # rubocop: enable Metric/AbcSize
 
   private
 

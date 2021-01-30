@@ -4,74 +4,30 @@ module AsciiPngfy
   # Reponsibilities
   #   - generate result object from the Pngfyer settings
   #   - render supported characters glyph design into result png
+  # rubocop: disable Metrics/ClassLength
   class SettingsRenderer
-    # Reponsibilities
-    #   - represent pixel coordinate pair as integers
-    #   - public getters for easy coordinate access
-    class Vec2i
-      attr_reader(:x, :y)
-
-      def initialize(initial_x = 0, initial_y = 0)
-        self.x = initial_x
-        self.y = initial_y
-      end
-
-      private
-
-      attr_writer(:x, :y)
+    def initialize(use_glyph_designs: true)
+      self.use_glyph_designs = use_glyph_designs
     end
 
-    # Reponsibilities
-    #   - represent an axis aligned bounding box through a minimum and
-    #     maximum coordinate coordinate pair
-    #   - public getters for easy min and max coordinate pair access
-    #   - provide a simple way to iterate all the pixel coordinates in
-    #     the respective bounding box through a closure
-    class AABB
-      attr_reader(:min, :max)
+    def render_result(settings_snapshot)
+      # settings snapshot updated for every result rendering
+      self.settings = settings_snapshot
 
-      def initialize(min_x, min_y, max_x, max_y)
-        self.min = Vec2i.new(min_x, min_y)
-        self.max = Vec2i.new(max_x, max_y)
-      end
-
-      def each_pixel
-        return nil unless block_given?
-
-        min.y.upto(max.y) do |tile_y|
-          min.x.upto(max.x) do |tile_x|
-            yield(tile_x, tile_y)
-          end
-        end
-      end
-
-      private
-
-      attr_writer(:min, :max)
-    end
-
-    def initialize(settings_snapshot)
-      @settings = settings_snapshot
-    end
-
-    def render_result
-      # prep png image with background color
       png = ChunkyPNG::Image.new(
         determine_png_width,
         determine_png_height,
         color_rgba_to_chunky_png_integer(settings.background_color)
       )
 
-      # plot font region into png - simply plot all and whole font regions
-      plot_font_regions_into(png)
+      plot_result(png)
 
-      # return the result
       Result.new(png, determine_render_width, determine_render_height, settings)
     end
 
     private
 
-    attr_accessor(:settings)
+    attr_accessor(:settings, :use_glyph_designs)
 
     def text_lines
       settings.text.split("\n", -1)
@@ -120,16 +76,20 @@ module AsciiPngfy
       )
     end
 
-    def generate_font_regions
-      font_regions = []
-
+    def each_font_region_with_associated_character(&yielder)
       text_lines_characters.each_with_index do |line_characters, row_index|
-        line_characters.each_with_index do |_character, column_index|
-          font_regions << determine_font_region(column_index, row_index)
+        line_characters.each_with_index do |character, column_index|
+          font_region = determine_font_region(column_index, row_index)
+
+          yielder.call(font_region, character)
         end
       end
+    end
 
-      font_regions
+    def each_font_region(&yielder)
+      each_font_region_with_associated_character do |font_region, _font_region_character|
+        yielder.call(font_region)
+      end
     end
 
     def color_rgba_to_chunky_png_integer(color_rgba)
@@ -174,8 +134,7 @@ module AsciiPngfy
       )
     end
 
-    def determine_final_font_color
-      # the font and background colors are only mixed if the font color is transparent
+    def determine_possibly_blended_font_and_background_color
       case settings.font_color.alpha
       when 255
         settings.font_color
@@ -184,15 +143,49 @@ module AsciiPngfy
       end
     end
 
-    def plot_font_regions_into(png)
-      final_font_color = determine_final_font_color
+    def determine_design_character_pixel_color(design_character)
+      if AsciiPngfy::Glyphs.font_layer_design_character?(design_character)
+        determine_possibly_blended_font_and_background_color
+      elsif AsciiPngfy::Glyphs.background_layer_design_character?(design_character)
+        settings.background_color
+      end
+    end
+
+    def plot_font_regions_with_design(png)
+      each_font_region_with_associated_character do |font_region, character|
+        # mirror the font design for each font region into the png
+        font_region_character_design = AsciiPngfy::Glyphs::DESIGNS[character]
+
+        font_region.each_pixel_with_index do |font_pixel_x, font_pixel_y, font_pixel_index|
+          png_pixel_design_character = font_region_character_design[font_pixel_index]
+
+          png_pixel_plot_color = determine_design_character_pixel_color(png_pixel_design_character)
+          png_pixel_plot_color_as_integer = color_rgba_to_chunky_png_integer(png_pixel_plot_color)
+
+          png[font_pixel_x, font_pixel_y] = png_pixel_plot_color_as_integer
+        end
+      end
+    end
+
+    def plot_font_regions_without_design(png)
+      final_font_color = determine_possibly_blended_font_and_background_color
       final_font_color_as_integer = color_rgba_to_chunky_png_integer(final_font_color)
 
-      generate_font_regions.each do |font_region|
+      each_font_region do |font_region|
+        # fill every font region entirely with, the potentially mixed, font and backround color
         font_region.each_pixel do |font_region_x, font_region_y|
           png[font_region_x, font_region_y] = final_font_color_as_integer
         end
       end
     end
+
+    def plot_result(png)
+      if use_glyph_designs
+        plot_font_regions_with_design(png)
+      else
+        plot_font_regions_without_design(png)
+      end
+    end
   end
 end
+# rubocop: enable Metrics/ClassLength

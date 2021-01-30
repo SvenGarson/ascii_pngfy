@@ -7,8 +7,9 @@ module AsciiPngfy
   #     to the appropriate setting if the are defined
   #   - Provide the settings to be used for this gem
   class Pngfyer
-    def initialize
+    def initialize(use_glyph_designs: true)
       self.settings = Settings::SetableGetableSettings.new
+      self.settings_renderer = SettingsRenderer.new(use_glyph_designs: use_glyph_designs)
     end
 
     def respond_to_missing?(method_name, *)
@@ -28,13 +29,12 @@ module AsciiPngfy
 
     def pngfy
       settings_snapshot = settings.getter_only_snapshot
-      settings_renderer = SettingsRenderer.new(settings_snapshot)
-      settings_renderer.render_result
+      settings_renderer.render_result(settings_snapshot)
     end
 
     private
 
-    attr_accessor(:settings)
+    attr_accessor(:settings, :settings_renderer)
 
     def settings_call?(method_name)
       method_name.start_with?('set_')
