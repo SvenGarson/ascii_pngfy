@@ -4,6 +4,14 @@ require 'rubygems'
 require 'bundler'
 Bundler.require(:default)
 
+# Reponsibilities
+#   - Top level namespace that contains all AsciiPngfy functionality
+#   - Contains general constants
+module AsciiPngfy
+  MAX_RESULT_PNG_IMAGE_WIDTH = 3840
+  MAX_RESULT_PNG_IMAGE_HEIGHT = 2160
+end
+
 require 'ascii_pngfy/pngfyer'
 
 require 'ascii_pngfy/settings'
@@ -24,6 +32,3 @@ require 'ascii_pngfy/result'
 require 'ascii_pngfy/color_rgba'
 require 'ascii_pngfy/exceptions'
 require 'ascii_pngfy/glyphs'
-
-# Top level namespace that that contains all AsciiPngfy functionality
-module AsciiPngfy; end

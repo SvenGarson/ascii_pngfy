@@ -4,7 +4,9 @@ module AsciiPngfy
   module Settings
     # Reponsibilities
     #   - Keeps track of the text and replacement_text setting
-    #   - Validates text and replacement_text
+    #   - Validates text and replacement_text, partially by referring to other
+    #     other modules such as for instance the Renderer for render related
+    #     computations validate from a single point of implementation
     #   - Replaces unsupported text characters with replacement text
     class TextSetting
       include SetableGetable
@@ -112,7 +114,7 @@ module AsciiPngfy
         error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
                         'Must contain at least one character with ASCII code 10 or in the range (32..126).'
 
-        # hint the user that the desired replacment text is also empty
+        # hint the user that the desired replacement text is also empty
         if replacement_desired?(desired_replacement_text) && desired_replacement_text.empty?
           error_message << ' Hint: Both the text and the replacement text are empty.'
         end
@@ -148,24 +150,31 @@ module AsciiPngfy
       end
 
       def validate_text_image_width(desired_text, image_width)
-        return desired_text unless image_width > 3840
+        return desired_text unless image_width > AsciiPngfy::MAX_RESULT_PNG_IMAGE_WIDTH
 
+        # old, assuming implementation
         longest_text_line = desired_text.split("\n", -1).max_by(&:size)
+
+        # new impl that determines the desired interface to the actual implementation
+        # longest_text_line = AsciiPngfy::Renderer.longest_text_line(desired_text)
+
         capped_text = cap_string(longest_text_line, '..', 60)
 
-        error_message = "The text line #{capped_text.inspect} is too long to be represented in a 3840 pixel wide"\
-                        ' png. Hint: Use shorter text lines and/or reduce the horizontal character spacing.'
+        error_message = "The text line #{capped_text.inspect} is too long to be represented in a "\
+                        "#{AsciiPngfy::MAX_RESULT_PNG_IMAGE_WIDTH} pixel wide png. Hint: Use shorter "\
+                        'text lines and/or reduce the horizontal character spacing.'
 
         raise AsciiPngfy::Exceptions::TextLineTooLongError, error_message
       end
 
       def validate_text_image_height(desired_text, image_height)
-        return desired_text unless image_height > 2160
+        return desired_text unless image_height > AsciiPngfy::MAX_RESULT_PNG_IMAGE_HEIGHT
 
         capped_text = cap_string(desired_text, '..', 60)
 
-        error_message = "The text #{capped_text.inspect} contains too many lines to be represented in a 2160 pixel"\
-                        ' high png. Hint: Use less text lines and/or reduce the vertical character spacing.'
+        error_message = "The text #{capped_text.inspect} contains too many lines to be represented in a "\
+                        "#{MAX_RESULT_PNG_IMAGE_HEIGHT} pixel high png. Hint: Use less text lines and/or "\
+                        'reduce the vertical character spacing.'
 
         raise AsciiPngfy::Exceptions::TooManyTextLinesError, error_message
       end

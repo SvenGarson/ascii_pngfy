@@ -8,8 +8,8 @@ module AsciiPngfy
   #   - Provide the settings to be used for this gem
   class Pngfyer
     def initialize(use_glyph_designs: true)
-      self.settings = Settings::SetableGetableSettings.new
       self.settings_renderer = SettingsRenderer.new(use_glyph_designs: use_glyph_designs)
+      self.settings = Settings::SetableGetableSettings.new
     end
 
     def respond_to_missing?(method_name, *)
