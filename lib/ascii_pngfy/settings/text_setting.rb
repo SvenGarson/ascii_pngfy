@@ -8,13 +8,15 @@ module AsciiPngfy
     #     other modules such as for instance the Renderer for render related
     #     computations validate from a single point of implementation
     #   - Replaces unsupported text characters with replacement text
+    # rubocop: disable Metrics/ClassLength
     class TextSetting
       include SetableGetable
 
       SUPPORTED_ASCII_CODES = [10] + (32..126).to_a.freeze
       SUPPORTED_ASCII_CHARACTERS = SUPPORTED_ASCII_CODES.map(&:chr).freeze
 
-      def initialize
+      def initialize(settings)
+        self.settings = settings
         self.text = ''
 
         set('<3 Ascii-Pngfy <3')
@@ -64,6 +66,8 @@ module AsciiPngfy
       attr_accessor(:text)
 
       private
+
+      attr_accessor(:settings)
 
       def character_supported?(some_character)
         SUPPORTED_ASCII_CHARACTERS.include?(some_character)
@@ -153,7 +157,7 @@ module AsciiPngfy
         return desired_text unless image_width > AsciiPngfy::MAX_RESULT_PNG_IMAGE_WIDTH
 
         # old, assuming implementation
-        longest_text_line = desired_text.split("\n", -1).max_by(&:size)
+        longest_text_line = RenderingRules.longest_text_line(desired_text)
 
         # new impl that determines the desired interface to the actual implementation
         # longest_text_line = AsciiPngfy::Renderer.longest_text_line(desired_text)
@@ -180,27 +184,11 @@ module AsciiPngfy
       end
 
       def validate_text_image_dimensions(desired_text)
-        image_width, image_height = determine_text_image_dimensions(desired_text)
+        image_width = AsciiPngfy::RenderingRules.png_width(settings, desired_text)
+        image_height = AsciiPngfy::RenderingRules.png_height(settings, desired_text)
 
         validate_text_image_width(desired_text, image_width)
         validate_text_image_height(desired_text, image_height)
-      end
-
-      def determine_text_image_dimensions(desired_text)
-        # the same logic will probably be needed in the renderer to plot the image
-        # for now keep this here but it is not the responsibility of the text settings
-        # and also this assumed the character spacing and does not actually use the
-        # settings set before
-        text_lines = desired_text.split("\n", -1)
-        longest_line_length = text_lines.max_by(&:length).size
-        lines_total = text_lines.length
-
-        horizontal_spacing_count = longest_line_length - 1
-        vertical_spacing_count = lines_total - 1
-        texture_width = (longest_line_length * 5) + (horizontal_spacing_count * 0)
-        texture_height = (lines_total * 9) + (vertical_spacing_count * 0)
-
-        [texture_width, texture_height]
       end
 
       def cap_string(some_string, desired_separator, desired_cap_length)
@@ -217,4 +205,5 @@ module AsciiPngfy
       end
     end
   end
+  # rubocop: enable Metrics/ClassLength
 end

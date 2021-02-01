@@ -6,7 +6,8 @@ class TestTextSetting < Minitest::Test
   attr_reader(:text_setting)
 
   def setup
-    @text_setting = AsciiPngfy::Settings::TextSetting.new
+    settings = AsciiPngfy::Settings::SetableGetableSettings.new
+    @text_setting = AsciiPngfy::Settings::TextSetting.new(settings)
   end
 
   def test_that_text_setting_set_cannot_be_used_to_inject_text_argument_to_mutate_internal_state

@@ -24,7 +24,8 @@ require 'ascii_pngfy/settings/horizontal_spacing_setting'
 require 'ascii_pngfy/settings/vertical_spacing_setting'
 require 'ascii_pngfy/settings/text_setting'
 
-require 'ascii_pngfy/renderer'
+require 'ascii_pngfy/rendering_rules'
+require 'ascii_pngfy/settings_renderer'
 require 'ascii_pngfy/vec2i'
 require 'ascii_pngfy/aabb'
 

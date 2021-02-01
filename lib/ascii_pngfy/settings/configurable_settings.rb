@@ -72,14 +72,16 @@ module AsciiPngfy
       end
 
       def initialize_supported_settings
-        self.settings = {
-          font_color: ColorSetting.new(255, 255, 255, 255),
-          background_color: ColorSetting.new(0, 0, 0, 255),
-          font_height: FontHeightSetting.new(9),
-          horizontal_spacing: HorizontalSpacingSetting.new(1),
-          vertical_spacing: VerticalSpacingSetting.new(1),
-          text: TextSetting.new
-        }
+        self.settings = {}
+
+        settings[:font_color] = ColorSetting.new(255, 255, 255, 255)
+        settings[:background_color] = ColorSetting.new(0, 0, 0, 255)
+        settings[:font_height] = FontHeightSetting.new(9)
+        settings[:horizontal_spacing] = HorizontalSpacingSetting.new(1)
+        settings[:vertical_spacing] = VerticalSpacingSetting.new(1)
+        settings[:text] = TextSetting.new(self)
+
+        settings
       end
 
       def setting(setting_name)
