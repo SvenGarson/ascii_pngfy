@@ -108,7 +108,13 @@ module AsciiPngfy
       ab = under_alpha.fdiv(255)
 
       # return alpha composited color component as integer in range 0..255
-      ((ca * aa + cb * ab * (1 - aa)) / (aa + ab * (1 - aa))).to_i
+      # and avoid divisions by zero
+      numerator = (ca * aa + cb * ab * (1 - aa))
+      denumerator = (aa + ab * (1 - aa))
+
+      return 0 if denumerator.zero?
+
+      (numerator / denumerator).to_i
     end
 
     def self.straight_alpha_composite_alpha_value(over_alpha, under_alpha)

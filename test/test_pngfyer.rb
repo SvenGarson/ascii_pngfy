@@ -765,6 +765,27 @@ class TestPngfyer < Minitest::Test
     assert_instance_of(AsciiPngfy::Result, pngfy_result)
   end
 
+  def test_that_pngfyer_pngfy_returns_result_when_font_color_fully_opaque_and_background_color_fully_transparent
+    test_pngfyer.set_font_color(red: 125, green: 18, blue: 194, alpha: 255)
+    test_pngfyer.set_background_color(red: 50, green: 75, blue: 16, alpha: 0)
+
+    assert_instance_of(AsciiPngfy::Result, test_pngfyer.pngfy)
+  end
+
+  def test_that_pngfyer_pngfy_returns_result_when_font_color_fully_transparent_and_background_color_fully_opaque
+    test_pngfyer.set_font_color(red: 125, green: 18, blue: 194, alpha: 0)
+    test_pngfyer.set_background_color(red: 50, green: 75, blue: 16, alpha: 255)
+
+    assert_instance_of(AsciiPngfy::Result, test_pngfyer.pngfy)
+  end
+
+  def test_that_pngfyer_pngfy_returns_result_when_font_color_fully_transparent_and_background_color_fully_transparent
+    test_pngfyer.set_font_color(red: 125, green: 18, blue: 194, alpha: 0)
+    test_pngfyer.set_background_color(red: 50, green: 75, blue: 16, alpha: 0)
+
+    assert_instance_of(AsciiPngfy::Result, test_pngfyer.pngfy)
+  end
+
   def test_that_pngfyer_raises_no_method_error_when_unsupported_setting_message_received
     assert_raises(NoMethodError) do
       test_pngfyer.set_flying_cows(999)

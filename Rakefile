@@ -10,7 +10,7 @@ end
 
 desc('Run current test suite')
 task(:test_current) do
-  file_to_test = 'test/test_glyphs.rb'
+  file_to_test = 'test/test_pngfyer.rb'
 
   if file_to_test.empty?
     puts 'Nothing to test!'
