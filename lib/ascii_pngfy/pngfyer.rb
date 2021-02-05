@@ -4,6 +4,7 @@ module AsciiPngfy
   # Reponsibilities
   #   - Provide the complete interface of this gem dynamically
   #     in order to force the interface of the Settings onto the caller
+  #   - Orchestrates the Settings and the SettingsRenderer
   class Pngfyer
     def initialize(use_glyph_designs: true)
       self.settings_renderer = SettingsRenderer.new(use_glyph_designs: use_glyph_designs)
