@@ -797,5 +797,13 @@ class TestPngfyer < Minitest::Test
       test_pngfyer.pngfy_result
     end
   end
+
+  def test_that_pngfyer_pngfy_returns_result_on_default_settings
+    pngfyer = AsciiPngfy::Pngfyer.new
+
+    result = pngfyer.pngfy
+
+    assert_instance_of(AsciiPngfy::Result, result)
+  end
 end
 # rubocop:enable Metrics/ClassLength, Metrics/MethodLength
