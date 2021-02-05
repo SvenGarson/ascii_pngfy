@@ -3,7 +3,7 @@
 module AsciiPngfy
   # Reponsibilities
   #   - Provides pixel plotting designs for all supported non-control
-  #     ASCII characters 
+  #     ASCII characters
   #   - Decides which design character, '.' or '#', represents the
   #     font layer or the background layer
   # rubocop: disable Metrics/ModuleLength

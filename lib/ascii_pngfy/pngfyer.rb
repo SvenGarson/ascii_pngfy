@@ -10,7 +10,7 @@ module AsciiPngfy
       self.settings = Settings::SetableGetableSettings.new
     end
 
-    def respond_to_missing?(method_name, *)
+    def respond_to_missing?(method_name, _)
       setter?(method_name) || super
     end
 
@@ -27,7 +27,7 @@ module AsciiPngfy
     end
 
     def pngfy
-      settings_snapshot = settings.getter_only_snapshot
+      settings_snapshot = settings.snapshot
       settings_renderer.render_result(settings_snapshot)
     end
 

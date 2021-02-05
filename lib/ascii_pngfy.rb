@@ -24,7 +24,7 @@ require 'ascii_pngfy/pngfyer'
 require 'ascii_pngfy/exceptions'
 
 require 'ascii_pngfy/settings'
-require 'ascii_pngfy/settings/configurable_settings'
+require 'ascii_pngfy/settings/settings_snapshot'
 require 'ascii_pngfy/settings/setable_getable_settings'
 
 require 'ascii_pngfy/settings/setable_getable'
