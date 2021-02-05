@@ -31,7 +31,7 @@ module AsciiPngfy
       longest_text_line_length = longest_text_line(use_text).length
       horizontal_spacing_count = longest_text_line_length - 1
 
-      (longest_text_line_length * 5) + (horizontal_spacing_count * settings.horizontal_spacing)
+      (longest_text_line_length * GLYPH_DESIGN_WIDTH) + (horizontal_spacing_count * settings.horizontal_spacing)
     end
 
     def self.png_height(settings, override_text = nil)
@@ -40,11 +40,11 @@ module AsciiPngfy
       text_line_count = text_lines(use_text).size
       vertical_spacing_count = text_line_count - 1
 
-      (text_line_count * 9) + (vertical_spacing_count * settings.vertical_spacing)
+      (text_line_count * GLYPH_DESIGN_HEIGHT) + (vertical_spacing_count * settings.vertical_spacing)
     end
 
     def self.font_multiplier(settings)
-      settings.font_height / 9
+      settings.font_height / GLYPH_DESIGN_HEIGHT
     end
 
     def self.render_width(settings)
@@ -60,10 +60,10 @@ module AsciiPngfy
     end
 
     def self.font_region(settings, character_column_index, character_row_index)
-      font_region_top_left_x = character_column_index * (settings.horizontal_spacing + 5)
-      font_region_top_left_y = character_row_index * (settings.vertical_spacing + 9)
-      font_region_bottom_right_x = font_region_top_left_x + (5 - 1)
-      font_region_bottom_right_y = font_region_top_left_y + (9 - 1)
+      font_region_top_left_x = character_column_index * (settings.horizontal_spacing + GLYPH_DESIGN_WIDTH)
+      font_region_top_left_y = character_row_index * (settings.vertical_spacing + GLYPH_DESIGN_HEIGHT)
+      font_region_bottom_right_x = font_region_top_left_x + (GLYPH_DESIGN_WIDTH - 1)
+      font_region_bottom_right_y = font_region_top_left_y + (GLYPH_DESIGN_HEIGHT - 1)
 
       AABB.new(
         font_region_top_left_x,
@@ -108,11 +108,11 @@ module AsciiPngfy
       ab = under_alpha.fdiv(255)
 
       # return alpha composited color component as integer in range 0..255
-      # and avoid divisions by zero
+      # avoid divisions by zero
       numerator = (ca * aa + cb * ab * (1 - aa))
       denumerator = (aa + ab * (1 - aa))
 
-      return 0 if denumerator.zero?
+      return 0 if denumerator.zero? || numerator.zero?
 
       (numerator / denumerator).to_i
     end
@@ -156,6 +156,10 @@ module AsciiPngfy
 
     def self.plot_font_regions_with_design(settings, png)
       each_font_region_with_associated_character(settings) do |font_region, character|
+        # the only ASCII character that has an empty glyph desgn is the space
+        # as long as the space is empty, nothing needs to be rendered
+        next if character == ' '
+
         # mirror the font design for each font region into the png
         font_region_character_design = AsciiPngfy::Glyphs::DESIGNS[character]
 

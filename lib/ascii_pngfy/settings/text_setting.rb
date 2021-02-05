@@ -12,9 +12,6 @@ module AsciiPngfy
     class TextSetting
       include SetableGetable
 
-      SUPPORTED_ASCII_CODES = [10] + (32..126).to_a.freeze
-      SUPPORTED_ASCII_CHARACTERS = SUPPORTED_ASCII_CODES.map(&:chr).freeze
-
       def initialize(settings)
         self.settings = settings
         self.text = ''
@@ -51,7 +48,7 @@ module AsciiPngfy
         validate_text_contents(desired_text)
         validate_text_image_dimensions(desired_text)
 
-        # set the fully validated and possibly sanitized text
+        # set the fully validated and possibly/partially/fully replaced text
         self.text = desired_text.dup
 
         desired_text
@@ -92,7 +89,8 @@ module AsciiPngfy
         return some_text if string_supported?(some_text)
 
         error_message = "#{some_text.inspect} is not a valid replacement string. "\
-                        'Must contain only characters with ASCII code 10 or in the range (32..126).'
+                        "Must contain only characters with ASCII code #{SUPPORTED_ASCII_CODES.min} "\
+                        "or in the range (#{SUPPORTED_ASCII_CODES_WITHOUT_NEWLINE_RANGE})."
 
         raise AsciiPngfy::Exceptions::InvalidReplacementTextError, error_message
       end
@@ -116,7 +114,8 @@ module AsciiPngfy
         return desired_text unless desired_text.empty?
 
         error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
-                        'Must contain at least one character with ASCII code 10 or in the range (32..126).'
+                        "Must contain at least one character with ASCII code #{SUPPORTED_ASCII_CODES.min} "\
+                        "or in the range (#{SUPPORTED_ASCII_CODES_WITHOUT_NEWLINE_RANGE})."
 
         # hint the user that the desired replacement text is also empty
         if replacement_desired?(desired_replacement_text) && desired_replacement_text.empty?
@@ -130,7 +129,8 @@ module AsciiPngfy
         return desired_text unless desired_text.empty?
 
         error_message = 'Text cannot be empty because that would result in a PNG with a width or height of zero. '\
-                        'Must contain at least one character with ASCII code 10 or in the range (32..126). '\
+                        "Must contain at least one character with ASCII code #{SUPPORTED_ASCII_CODES.min} "\
+                        "or in the range (#{SUPPORTED_ASCII_CODES_WITHOUT_NEWLINE_RANGE}). "\
                         'Hint: An empty replacement text causes text with only unsupported characters to end up as '\
                         'empty string.'
 
@@ -148,7 +148,8 @@ module AsciiPngfy
                                        "#{un_supported_inspected_characters.last}"
 
         error_message = "#{un_supported_characters_list} are all invalid text characters. "\
-                        'Must contain only characters with ASCII code 10 or in the range (32..126).'
+                        "Must contain only characters with ASCII code #{SUPPORTED_ASCII_CODES.min} "\
+                        "or in the range (#{SUPPORTED_ASCII_CODES_WITHOUT_NEWLINE_RANGE})."
 
         raise AsciiPngfy::Exceptions::InvalidCharacterError, error_message
       end
