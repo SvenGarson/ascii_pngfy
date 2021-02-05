@@ -4,10 +4,8 @@ module AsciiPngfy
   module Settings
     # Reponsibilities
     #   - Keeps track of the text and replacement_text setting
-    #   - Validates text and replacement_text, partially by referring to other
-    #     other modules such as for instance the Renderer for render related
-    #     computations validate from a single point of implementation
     #   - Replaces unsupported text characters with replacement text
+    #   - Validates text and replacement_text
     # rubocop: disable Metrics/ClassLength
     class TextSetting
       include SetableGetable
@@ -23,18 +21,23 @@ module AsciiPngfy
         text.dup
       end
 
-      # the philosophy behind this method is as follows:
-      # - The desired_text cannot be empty pre replacement. If it is empty, an error is thrown
+      # The philosophy behind this method is as follows:
+      # - The desired_text cannot be empty pre replacement. If it is an error is raised
+      #
       # - When no replacement text is passed, the desired_text is considered as is by
       #   skipping the replacement procedure
+      #
       # - When a replacement text is passed though, the replacement text is validated and
       #   all unsupported text characters are replaced with the replacement text
-      # - The text is then validated post replacement to make sure it is not empty, the same as
-      #   pre replacement
+      #
+      # - The text is then validated post replacement to make sure it is not empty,
+      #   the same as pre replacement
+      #
       # - At this point the text is validated to only contain supported ASCII characters
-      #   and has its dimensions checked in terms of the needed png texture size needed
-      #   to fit the resulting text along with the character spacing previously set.
-      # - Finally the text is updated
+      #   and has its dimensions checked in terms of the needed png texture size to fit
+      #   the resulting text along with the character spacing previously set.
+      #
+      # - Finally the text setting is updated to the resulting, optionally replaced text
       def set(desired_text, desired_replacement_text = nil)
         pre_replacement_text_validation(desired_text, desired_replacement_text)
 
@@ -48,7 +51,7 @@ module AsciiPngfy
         validate_text_contents(desired_text)
         validate_text_image_dimensions(desired_text)
 
-        # set the fully validated and possibly/partially/fully replaced text
+        # set the text to a duplicate of the original text to avoid string injection
         self.text = desired_text.dup
 
         desired_text
@@ -81,7 +84,8 @@ module AsciiPngfy
       end
 
       def string_supported?(some_string)
-        # also returns true when the string is empty
+        # also returns true when the string is empty, so an undesired empty string must
+        # be handled separately
         extract_unsupported_characters(some_string).empty?
       end
 
@@ -138,8 +142,8 @@ module AsciiPngfy
       end
 
       def validate_text_contents(some_text)
-        # This method only accounts for non-empty strings that contains unsupported characters.
-        # Empty strings are handled separately to separate different types of errors more clearly
+        # this method only accounts for non-empty strings that contains unsupported characters
+        # empty strings are handled separately to separate different types of errors more clearly
         return some_text if string_supported?(some_text)
 
         un_supported_characters = extract_unsupported_characters(some_text)
@@ -157,11 +161,7 @@ module AsciiPngfy
       def validate_text_image_width(desired_text, image_width)
         return desired_text unless image_width > AsciiPngfy::MAX_RESULT_PNG_IMAGE_WIDTH
 
-        # old, assuming implementation
         longest_text_line = RenderingRules.longest_text_line(desired_text)
-
-        # new impl that determines the desired interface to the actual implementation
-        # longest_text_line = AsciiPngfy::Renderer.longest_text_line(desired_text)
 
         capped_text = cap_string(longest_text_line, '..', 60)
 

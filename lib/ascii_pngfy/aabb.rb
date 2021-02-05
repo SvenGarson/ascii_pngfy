@@ -2,13 +2,13 @@
 
 module AsciiPngfy
   # Reponsibilities
-  #   - represent an axis aligned bounding box through a minimum and
+  #   - Represents an axis aligned bounding box through a minimum and
   #     maximum coordinate pair
-  #   - public getters for easy min and max coordinate pair access
-  #   - provide a simple way to iterate all the pixel coordinates in
-  #     the respective bounding with and without pixel index
+  #   - Public getters for the min and max coordinate pair
+  #   - Provides a way to iterate all the pixel coordinates in
+  #     the respective bounding box with and without the pixel index
   #
-  #     this pixel index follows the conventions used for the glyph
+  #     This pixel index follows the conventions used for the glyph
   #     design string where the index increases based on the iterated
   #     pixel from:
   #       - topmost row to bottommost row

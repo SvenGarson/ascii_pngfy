@@ -8,13 +8,13 @@ module AsciiPngfy
   #     current implementation of the Settings
   #
   #   - Provide a single point of reference for all computations that
-  #     contribute to the renderer result of the Pngfy process
+  #     contribute to the renderer result of the #pngfy process
   #
-  #   - Computations based on setting implementation values such as
-  #     color; font height; spacing and text
+  #   - Computations based on setting values such as color;
+  #     font height; spacing and text
   #
-  #   - Generalized enough so that any settings related context can
-  #     access this data if needed
+  #   - General enough so that any settings related context can
+  #     use this functionality
   # rubocop: disable Metrics/ModuleLength
   module RenderingRules
     def self.text_lines(text)
@@ -157,7 +157,7 @@ module AsciiPngfy
     def self.plot_font_regions_with_design(settings, png)
       each_font_region_with_associated_character(settings) do |font_region, character|
         # the only ASCII character that has an empty glyph desgn is the space
-        # as long as the space is empty, nothing needs to be rendered
+        # so avoid unnecessary work for spaces
         next if character == ' '
 
         # mirror the font design for each font region into the png

@@ -3,7 +3,7 @@
 module AsciiPngfy
   module Settings
     # Reponsibilities
-    #   - Keeps track of the color setting(s)
+    #   - Keeps track of the color setting
     #   - Validated through ColorRGBA implicitly
     class ColorSetting
       include SetableGetable

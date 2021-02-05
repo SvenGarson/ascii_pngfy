@@ -2,10 +2,8 @@
 
 module AsciiPngfy
   # Reponsibilities
-  #   - Provide the complete interface of this gem
-  #   - References settings and pipe user setting calls
-  #     to the appropriate setting if the are defined
-  #   - Provide the settings to be used for this gem
+  #   - Provide the complete interface of this gem dynamically
+  #     in order to force the interface of the Settings onto the caller
   class Pngfyer
     def initialize(use_glyph_designs: true)
       self.settings_renderer = SettingsRenderer.new(use_glyph_designs: use_glyph_designs)
@@ -17,8 +15,9 @@ module AsciiPngfy
     end
 
     def method_missing(method_name, *arguments)
-      # forward only set_* calls to the settings so that the
-      # respective setting can enforce it's interface
+      # forward only set_* calls to the settings so that the respective setting
+      # can enforce it's interface and any unsupported setting setters results
+      # in an undefined method error
       if setter?(method_name)
         setting_call = method_name
         settings.public_send(setting_call, *arguments)

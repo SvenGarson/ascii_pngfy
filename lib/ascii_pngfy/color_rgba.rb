@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module AsciiPngfy
-  # Provides simple RGBA color hanlding
+  # Reponsibilities
+  #   - Provides RGBA color handling and validation
   class ColorRGBA
     VALID_RGBA_COLOR_RANGE = (0..255).freeze
     attr_reader(:red, :green, :blue, :alpha)

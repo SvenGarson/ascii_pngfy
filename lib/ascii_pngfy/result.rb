@@ -4,11 +4,10 @@ require 'chunky_png'
 
 module AsciiPngfy
   # Reponsibilities
-  #   > Provides access to the following data points
-  #       - generated png along with all of the png#* methods
-  #         provided by chunky_png
-  #       - render dimensions
-  #       - snapshot of settings used for a particular result
+  #   > Provides acces to Result data points, which are
+  #     - generated png as ChunkyPNG::Image instance
+  #     - render width and height
+  #     - settings snapshot that supports only setting getters
   class Result
     attr_reader(:png, :render_width, :render_height, :settings)
 

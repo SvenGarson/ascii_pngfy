@@ -3,7 +3,7 @@
 module AsciiPngfy
   module Settings
     # Reponsibilities
-    #   - Keeps track of the the font_height setting
+    #   - Keeps track of the font_height setting
     #   - Validates font_height
     class FontHeightSetting
       include SetableGetable

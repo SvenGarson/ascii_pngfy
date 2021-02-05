@@ -2,8 +2,8 @@
 
 module AsciiPngfy
   # Reponsibilities
-  #   - Use RenderingRules to interpret settings into a Result object
-  #   - Use Glyph designs to plot design data into the result png
+  #   - Uses RenderingRules to interpret settings into a Result object
+  #   - Uses Glyph designs to plot design data into the result png
   class SettingsRenderer
     def initialize(use_glyph_designs: true)
       self.use_glyph_designs = use_glyph_designs

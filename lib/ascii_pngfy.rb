@@ -5,8 +5,9 @@ require 'bundler'
 Bundler.require(:default)
 
 # Reponsibilities
-#   - Top level namespace that contains all AsciiPngfy functionality
-#   - Contains general constants
+#   - Top level namespace that contains all AsciiPngfy
+#     sub-namespaces and general constants
+#   - Requires all files needed to use the AsciiPngfy Gem
 module AsciiPngfy
   MAX_RESULT_PNG_IMAGE_WIDTH = 3840
   MAX_RESULT_PNG_IMAGE_HEIGHT = 2160

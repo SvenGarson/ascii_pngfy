@@ -5,6 +5,9 @@ module AsciiPngfy
     # Provides the interface for all the Setting implementations in a way that
     # each inclusion of this module forces the including class to override
     # the behaviour for #set and #get
+    #
+    # If the #get or #set method is called, but it is not overriden by the object
+    # mixing this module in, a NotImplementedError is raised
     module SetableGetable
       def get
         self_class_name = self.class.to_s

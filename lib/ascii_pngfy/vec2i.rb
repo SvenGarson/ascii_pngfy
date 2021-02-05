@@ -2,9 +2,8 @@
 
 module AsciiPngfy
   # Reponsibilities
-  #   - represent pixel coordinate pair as integers
-  #   - public getters only for easy coordinate access
-  #     we want getters only because that is all that is needed
+  #   - Helper used to represent integer pixel coordinate pair
+  #   - Public getters for each coordinate
   class Vec2i
     attr_reader(:x, :y)
 

@@ -3,9 +3,9 @@
 module AsciiPngfy
   module Settings
     # Reponsibilities
-    #   - Pipe setter and getter calls to a specific Setting implementation
-    #   - Defines wether the settings can be set and/or retreived(get) externally
-    #   - Register supported settings and what name to associate each setting to
+    #   - Pipes setter and getter calls to a specific Setting instance
+    #   - Defines wether all settings can be set and/or retreived(get) externally
+    #   - Associates supported settings with the respective Setting name
     class ConfigurableSettings
       GET = :get
       SET = :set
@@ -45,7 +45,7 @@ module AsciiPngfy
         duplicate.supported_operations = duplicate.supported_operations.dup
 
         # the supported_settings hash must be dupped at the hash level as well as each value for every k/v pair
-        # because the keys are symbols, so always point to the same value in memory and the values are custom class
+        # because the keys are symbols, so always point to the same value in memory but the values are custom class
         # instances and may need specific duplication logic at that implementation level to avoid state sharing
         # between duplicated objects
         duplicate.settings = duplicate.settings.dup.transform_values(&:dup)
