@@ -42,17 +42,19 @@ module AsciiPngfy
 
       attr_accessor(:settings)
 
+      def add(setting_name, setting_instance)
+        self.settings ||= {}
+
+        settings[setting_name] = setting_instance
+      end
+
       def initialize_supported_settings
-        self.settings = {}
-
-        settings[:font_color] = ColorSetting.new(255, 255, 255, 255)
-        settings[:background_color] = ColorSetting.new(0, 0, 0, 255)
-        settings[:font_height] = FontHeightSetting.new(9)
-        settings[:horizontal_spacing] = HorizontalSpacingSetting.new(1)
-        settings[:vertical_spacing] = VerticalSpacingSetting.new(1)
-        settings[:text] = TextSetting.new(self)
-
-        settings
+        add(:font_color, ColorSetting.new(255, 255, 255, 255))
+        add(:background_color, ColorSetting.new(0, 0, 0, 255))
+        add(:font_height, FontHeightSetting.new(9))
+        add(:horizontal_spacing, HorizontalSpacingSetting.new(1))
+        add(:vertical_spacing, VerticalSpacingSetting.new(1))
+        add(:text, TextSetting.new(self))
       end
 
       def setting(setting_name)
