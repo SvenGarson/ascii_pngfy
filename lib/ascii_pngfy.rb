@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'bundler'
-Bundler.require(:default)
-
 # Reponsibilities
 #   - Top level namespace that contains all AsciiPngfy
 #     sub-namespaces and general constants

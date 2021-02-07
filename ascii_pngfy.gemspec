@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/SvenGarson/ascii_pngfy'
   s.metadata    = { 'source_code_uri' => 'https://github.com/SvenGarson/ascii_pngfy' }
   s.add_runtime_dependency 'chunky_png', '1.4.0'
+  s.add_runtime_dependency 'rake'
 end
