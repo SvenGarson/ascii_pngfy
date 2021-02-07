@@ -2,10 +2,7 @@
 
 desc('Run all tests')
 task(:test_all) do
-  # Get absolute paths of all test_*.rb files in the /test directory
-  # Add the test directory to the $LOAD_PATH through the Ruby parser
-  # so that the test files can require the test helper file
-  Dir.glob(File.join('.', 'test', '**', 'test_*.rb')).each do |test_filename|
+  Dir['test/**/test_*.rb'].each do |test_filename|
     system("bundle exec ruby -Itest #{test_filename}")
   end
 end
