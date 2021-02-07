@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'testing_prerequisites'
+require 'testing_prerequisites'
 
 # rubocop:disable Metrics/ClassLength
 class TestColorRGBA < Minitest::Test

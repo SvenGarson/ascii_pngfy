@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestSettings < Minitest::Test
   def test_that_settings_is_defined

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestEmptyTextError < Minitest::Test
   def test_that_empty_text_error_is_defined

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestAsciiPngfy < Minitest::Test
   def test_that_ascii_pngfy_is_defined

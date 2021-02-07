@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestFontHeightSetting < Minitest::Test
   def test_that_font_height_setting_set_returns_font_height_which_reflects_the_new_internal_font_height

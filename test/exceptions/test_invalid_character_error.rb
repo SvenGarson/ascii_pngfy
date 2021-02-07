@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestInvalidCharacterError < Minitest::Test
   def test_that_invalid_character_error_is_defined

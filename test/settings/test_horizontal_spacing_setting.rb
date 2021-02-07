@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestHorizontalSpacingSetting < Minitest::Test
   def test_that_horizontal_spacing_setting_set_returns_horizontal_spacing_which_reflects_the_new_internal_spacing

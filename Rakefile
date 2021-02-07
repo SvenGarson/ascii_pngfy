@@ -2,30 +2,20 @@
 
 desc('Run all tests')
 task(:test_all) do
-  # Run all text files in this directory
+  # Get absolute paths of all test_*.rb files in the /test directory
+  # Add the test directory to the $LOAD_PATH through the Ruby parser
+  # so that the test files can require the test helper file
   Dir.glob(File.join('.', 'test', '**', 'test_*.rb')).each do |test_filename|
-    system("bundle exec ruby #{test_filename}")
+    system("bundle exec ruby -Itest #{test_filename}")
   end
 end
 
-desc('Run current test suite')
-task(:test_current) do
-  file_to_test = 'test/test_pngfyer.rb'
-
-  if file_to_test.empty?
-    puts 'Nothing to test!'
-  else
-    puts "\n=== Testing single file: #{file_to_test} ==="
-    system("bundle exec ruby #{file_to_test}")
-  end
-end
-
-desc('Run Rubocop on library')
+desc('Run Rubocop on library and tests')
 task(:cop) do
   system('bundle exec rubocop')
 end
 
-desc('Run all tests and rubocop before next TDD cycle')
+desc('Run all tests and then Rubocop')
 task(exam: %I[test_all cop]) do
   puts "\nRunning all test and running rubocop."
 end

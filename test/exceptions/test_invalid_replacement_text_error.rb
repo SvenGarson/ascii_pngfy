@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestInvalidReplacementTextError < Minitest::Test
   def test_that_invalid_replacement_text_error_is_defined

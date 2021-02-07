@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestExceptions < Minitest::Test
   def test_that_exceptions_is_defined

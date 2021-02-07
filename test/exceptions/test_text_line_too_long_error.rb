@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestTextLineTooLongError < Minitest::Test
   def test_that_text_line_too_long_error_is_defined

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'testing_prerequisites'
+require 'testing_prerequisites'
 require 'chunky_png'
 
 # rubocop:disable Metrics/ClassLength, Metrics/MethodLength
@@ -964,7 +964,7 @@ class TestResult < Minitest::Test
     end
   end
 
-  # rubocop: disable Metric/AbcSize
+  # rubocop: disable Metrics/AbcSize
   def test_that_result_png_pixels_mirror_the_glyph_design_precisely_for_every_supported_non_control_character
     # to make that the glyph designs are accurately represented by the result png, we generate a
     # result png for every single supported non-control character through a single character text
@@ -1019,7 +1019,7 @@ class TestResult < Minitest::Test
       end
     end
   end
-  # rubocop: enable Metric/AbcSize
+  # rubocop: enable Metrics/AbcSize
 
   private
 

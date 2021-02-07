@@ -1,6 +1,6 @@
 # frozen_string_literal: false
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestTextSetting < Minitest::Test
   attr_reader(:text_setting)

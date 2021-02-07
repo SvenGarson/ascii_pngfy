@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestInvalidHorizontalSpacingError < Minitest::Test
   def test_that_invalid_horizontal_spacing_error_is_defined

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../testing_prerequisites'
+require 'testing_prerequisites'
 
 class TestColorSetting < Minitest::Test
   def test_that_color_setting_set_returns_color_rgba_instance_where_color_components_reflect_the_new_internal_color
