@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version = '2.7.2'
+  spec.required_ruby_version = '~>2.7.2'
   spec.name = 'ascii_pngfy'
-  spec.version = '0.1.0'
+  spec.version = '0.2.0'
   spec.summary = 'Ruby Gem that renders ASCII text into PNGs using a 5x9 monospaced font.'
   spec.description = [
     'AsciiPngfy is a Ruby Gem that enables you to render ASCII text into a PNG image up to a resolution of 3840(width)',
