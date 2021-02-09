@@ -2,7 +2,15 @@
 
 ---
 
-AsciiPngfy is a Ruby Gem that enables you to render ASCII character text into a PNG image using a 5x9 monospaced font. 
+AsciiPngfy is a Ruby Gem that enables you to render ASCII character text into a PNG image using a 5x9 monospaced font.
+
+The following **96** ASCII characters are currently supported:
+
+- printable characters - total of 95 characters
+  - ASCII codes in range `32..126`
+- control characters - total of 1 character
+  - ASCII code `10` (newline)
+    
 
 The Gem can be configured to change the result using the following settings:
 
@@ -272,10 +280,101 @@ gem 'ascii_pngfy'
 
     
 
-#### How it works
+#### Current limitations
 
 ---
 
+While chunky_png and the PNG specifications can handle very high image resolutions on both the horizontal and vertical axis, I wanted to keep the images at a reasonable size that reflects the intentional use, which is video games or other rendering centric applications.
+
+Initial tests showed that a naive approach to generating a 4K resolution image took a few seconds on a mid-level consumer laptop. This has many reasons off course, some of which are:
+
+  - ruby is interpreted
+  - chunky_png internals
+  - data locality
+  - algorithms used
+  - OOP
+  - size of the image
+  - etc
+
+which made it clear that the naive approach could potentially be a problem.
+
+This application/Gem was supposed to be used for a simple website application, and in a stateless HTTP/S request-response cycle, long request-response round-trips are something to be heavily avoided.
+However, starting with an optimization is usually bad, and a fully working application can always be optimized later.
+
+The consumer 4K maximum image resolution was chosen so that a games/application that use these images could generate images that span the full size of these consumer grade 4K displays. Coincidentally, the resolution of 3840x2160 nicely divides into the character glyph size of 5x9.
+
+This means that a text block with (2160/9) = 240 lines and (3840/5) = 768 columns fits exactly into that maximum supported image resolution. This was a happy coincidence.
+
+
+
+#### The public Gem interface
+
+---
+
+Initial goals in terms of the Gems interface:
+
+- powerful, expressive, minimalist
+- keep the interface methods as short as possible
+- clear arguments
+- separation of concerns between methods
+- make use of symbol arguments/parameters when appropriate
+  
+
+
+#### Raising (custom) errors VS acting on return values
+
+---
+
+  In order to enforce the internal requirements and limitations, the considered options were:
+
+  - exceptions only
+  - return values only
+  - mixture of exceptions and return values
+
+
+Initially I wanted to stay away from Exceptions as much as possible because of the techniques I was accustomed to from C programing, for instance:
+
+  - using return codes to determine actions by checking API level constants
+  - being able to print an error message based on the most recent error
+  - the ability to ignore return values
+    
+
+I finally decided to just use exceptions for the following two reasons:
+
+1. It disables the Gem user to simply ignore the raised exceptions
+
+2. I wanted to challenge my assumptions about the advantages and disadvantages of exceptions
+
+
+Outside of the context of a Ruby Gem, I would not have used exceptions, or at least not so extensively.
+
+
+
+This particular exception based approach is very verbose and most custom exception classes have been defined solely to make the error message clearer. While it makes the error message clearer in its intention to guide the user where exactly the error happened and how to fix the error by stating what the supported options are, the same could be achieved by using a single or at least a reduced amount Exception types.
+
+
+This implementation is subject to big change, but the reason I added so many Exception classes initially are:
+
+- Not knowing what sorts of invalid input I missed in the initial, upfront design. At that point I should have gone with a single or even a standard error type in order to avoid the over-complication and re-evaluate later when all/most of the invalid input would come to light.
+- Wanting clear separation of concerns between the different settings setter methods so that the user could account for all the invalid input for a specific setting by catching specific error classes. I thought this would be good to enable a user to catch specific errors for a given setting type so that, for instance, when setting the text, the user could check for:
+  - Invalid characters in the original text
+  - Empty text either before or after the optional unsupported character replacement procedure
+  - Invalid characters in the replacement text, which is supposed to be used as valid fall-back of invalid text
+  - A text line that is too long because it requires more than the consumer 4K resolution width or the horizontal spacing makes it surpass that image resolution limit
+  - A text that has too many lines and requires more vertical space than the limit 4K consumer resolution has or the vertical spacing makes it surpass that limit
+    
+
+#### Upfront design considerations and Test driven development
+
+---
+
+Based on previous experiences I knew to avoid designing the whole application upfront if the development cycle includes test driven development. This has a few reasons, which again, are based on personal experience:
+
+- Analysis paralysis
+- Emergent requirements break the upfront design
+- Not everything can and should be planned for, instead leave room for interpretation
+- Start the test driven development cycle at the public interface level and leave the implementation details out of the test suites initially so that the architecture can change accordingly
+- Start to increase test coverage of the code base once the architecture solidifies
 
 
 
@@ -314,6 +413,4 @@ gem 'ascii_pngfy'
 - Add border rendering
 - Add image margin/padding
 - Add result data points that enable the Gem user to easily iterate the respective bounding boxes of the rendered characters in terms of the generated PNG image coordinates
-
-
 
