@@ -41,10 +41,10 @@ result = pngfyer.pngfy
 # inspect the results
 puts "png.width    : #{result.png.width}"
 puts "png.height   : #{result.png.height}"
-puts "render width : #{result.render_width}"
-puts "render height: #{result.render_height}"
+puts "render_width : #{result.render_width}"
+puts "render_height: #{result.render_height}"
 puts "settings.font_color        : #{result.settings.font_color.inspect}"
-puts "settings.background.color  : #{result.settings.background_color.inspect}"
+puts "settings.background_color  : #{result.settings.background_color.inspect}"
 puts "settings.font_height       : #{result.settings.font_height.inspect}"
 puts "settings.horizontal_spacing: #{result.settings.horizontal_spacing.inspect}"
 puts "settings.vertical_spacing  : #{result.settings.vertical_spacing.inspect}"
@@ -53,7 +53,6 @@ puts "settings.text              : #{result.settings.text.inspect}"
 # saving the resulting png
 save_directory = File.join(File.expand_path(__dir__), 'example.png')
 result.png.save(save_directory)
-
 ```
 
 
@@ -99,6 +98,8 @@ gem 'ascii_pngfy'
 
 
 #### Basic Usage
+
+---
 
 - Instantiate a `AsciiPngfy::Pngfyer` which acts as the Gem interface:
 
@@ -189,7 +190,7 @@ gem 'ascii_pngfy'
       pngfyer.set_horizontal_spacing(0)  # => 0
       pngfyer.set_horizontal_spacing(1)  # => 1
       pngfyer.set_horizontal_spacing(15) # => 15
-       ```
+      ```
 
   - `Pngfyer#set_vertical_spacing`
     The same as `Pngfyer#set_horizontal_spacing` but for the vertical-spacing.
@@ -225,7 +226,51 @@ gem 'ascii_pngfy'
       pngfyer.set_text("A\u2713C", '?') # => "A?C" because \u2713 is unsupported
        ```
 
-      
+- `Pngfyer#pngfy`
+  Generates an `AsciiPngfy::Result` objects based on the previously set settings.
+
+  - **Arguments**
+    None
+
+  - **Return value**
+    Instance of `AsciiPngfy::Result` that reflects the previously set settings and the result data through the following data points:
+
+    - `#png`: instance of `ChunkyPNG::Image` the text is rendered into
+    - `#png.width`: the width of the generated PNG
+    - `#png.height`: the height of the generated PNG
+    - `#render_width`: the width in pixels the generated PNG should be drawn at using NEAREST filters in order to display the text according to the font-height setting
+    - `#render_height`: the height in pixels the generated PNG should be drawn at using NEAREST filters in order to display the text according to the font-height setting
+    - `#settings`: instance of `AsciiPngfy::Settings::SettingsSnapshot` that represents the settings at the point of result generation
+    - `#settings.font_color`: instance of `AsciiPngfy::ColorRGBA`  representing the font-color used for this result
+    - `#settings.background_color`: instance of `AsciiPngfy::ColorRGBA`  representing the background-color used for this result
+    - `#settings.font_height`: font-height used for this result
+    - `#settings.horizontal_spacing`: horizontal-spacing used for this result
+    - `#settings.vertical_spacing`: vertical-spacing used for this result
+    - `#settings.text`: text used for this result
+
+  - **Examples**
+
+    ```ruby
+    result = pngfyer.pngfy
+    
+    # accessing each result data point
+    result.png
+    result.png.width
+    result.png.height
+    
+    result.render_width
+    result.render_height
+    
+    result.settings
+    result.settings.font_color
+    result.settings.background_color
+    result.settings.font_height
+    result.settings.horizontal_spacing
+    result.settings.vertical_spacing
+    result.settings.text
+    ```
+
+    
 
 #### How it works
 
@@ -233,25 +278,42 @@ gem 'ascii_pngfy'
 
 
 
-#### Issues
+
+#### Observed Issues
 
 ---
 
+- When text contains single unsupported, unicode character, the error message conveys that  there is more than a single text character through the following example message:
 
+  `and "ᜣ" are all invalid text characters. Must contain only characters with ASCII code 10 or in the range (32..126).`
+  This seems like a bug that is caused  during unsupported character extraction to provide the error message.
 
-#### What needs to change
+#### 
+
+#### Todos for this projects
 
 ---
 
-
+- Re-design all the test-suites
+- Document using RDoc once the design solidifies
+- Render images faster. Check which sort of optimizations can be made on the `chunky_png` level
+- Provide a way for Gem users to determine valid inputs before running settings methods
+  An useful example would be to provide an array or range of supported ASCII characters/codes
+- Use a build system that does not just test source code but also the gem built before publishing it
+- Determine how to track changes made to the repository and what changes are made to the public Gem interface so that the according SemVer version number can be incremented
+- Online demo using a simple http/s application as Heroku application
+- Make sure that exceptions raised also work in situation where the user decides to catch the error, but fails to gracefully handle the error, i.e, when the error persists in the state of the implementation because no action was taken, and the procedures which should be enforced by the raised error are ignored by the Gem user.
+  
 
 #### Feature ideas
 
 ---
 
-
-
-
+- Add line-through formatting
+- Replace current with more accurate alpha compositing method using pre-multiplied alpha compositing
+- Add border rendering
+- Add image margin/padding
+- Add result data points that enable the Gem user to easily iterate the respective bounding boxes of the rendered characters in terms of the generated PNG image coordinates
 
 
 
