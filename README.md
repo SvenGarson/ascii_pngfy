@@ -58,23 +58,20 @@ result.png.save(save_directory)
 
 
 Generated `result.png`:
+
 ![alt text](resources/images/example.png "example.png")
 
 
 
-<images>
-
-- 
-- what it is as gem
-- portfolio project
-
-
-
-#### Inspiration and Credit(s)
+#### Inspiration and Credits
 
 ---
 
-- Monogram
+AsciiPngfy is inspired by the awesome [Monogram](https://datagoblin.itch.io/monogram). I fell in love with this low-resolution monospaced font the moment I stumbled upon it.
+
+While this Gem is **not** a collaboration with [Monogram](https://datagoblin.itch.io/monogram), **nor** are the supported character glyph designs necessarily the same design as the [Monogram](https://datagoblin.itch.io/monogram) font, I wanted to credit the creator of this amazing low-resolution, monospaced pixel font.
+
+Please pay [Monogram ](https://datagoblin.itch.io/monogram) a visit.
 
 
 
@@ -82,20 +79,153 @@ Generated `result.png`:
 
 ---
 
-- how to install
+Download and install ascii_pngfy with the following gem command:
+
+```
+gem install ascii_pngfy
+```
+
+
+or use the Gem in your project using the `Gemfile`:
+
+```ruby
+source 'https://rubygems.org'
+
+ruby '2.7.2'
+
+gem 'ascii_pngfy'
+```
 
 
 
 #### Basic Usage
 
----
+- Instantiate a `AsciiPngfy::Pngfyer` which acts as the Gem interface:
+
+  ```ruby
+  require 'ascii_pngfy'
+  
+  pngfyer = AsciiPngfy::Pngfyer.new
+  ```
+
+- Set desired settings through the `Pngfyer` instance using the `Pngfyer#set_*` methods.
+
+  **Note**: The current implementation raises many different types of contextually informative error.
+
+  The current implementation, in terms of the number of different errors as well as the type of errors will probably change in future updates, so take the following documentation as a guide and experiment with out of range arguments. All raised errors should be informative enough and sometimes contain hints of how the error can be avoided by stating the rules and clarifying which specific input is invalid/unsupported.
 
 
+  Following are all the currently supported settings:
 
-- usage examples with most important points
-- extended usage with return values etc
+  - `Pngfyer#set_font_color`
+    Updates currently selected font-color only for the color components that are passed.
 
+    - **Arguments**
+      All arguments are optional but must be an integer in the range `0..255` when provided for each color component.
+      - `red:`
+      -  `green:`
+      -  `blue:`
+      -  `alpha:`
 
+    - **Return value**
+      Instance of `AsciiPngfy::ColorRGBA` that reflects the currently selected font color **after** updating with the passed color component values.
+
+    - **Examples**
+
+      ```ruby
+      pngfyer.set_font_color(red: 50) # set only red font-color component
+      pngfyer.set_font_color(green: 100) # set only green font-color component
+      pngfyer.set_font_color(red: 50, blue: 150, alpha: 255) # mix
+      pngfyer.set_font_color() # no font color component updated
+      ```
+
+  - `Pngfyer#set_background_color`
+    The same as `Pngfyer#set_font_color` but for the background color.
+
+  - `Pngfyer#set_font_height`
+    Updates the currently selected font-height.
+
+    - **Arguments**
+      Takes a single integer in the range `9..`, i.e. an integer larger than or equal to nine.
+      While only multiples of nine are supported internally, this argument does not have to be a multiple of nine:
+
+      - If a multiple of nine is entered, the argument is used as is
+
+      - Otherwise the closes multiple of nine is chosen. Here an example:
+        When the argument is `12`, the closest multiple of nine is `9` but when the argument is `16`, the closest multiple of nine is `18`. The following illustration should make the logic clear:
+
+        ```
+        Desired font height: 12
+        Closest multiples of nine: 9 and 18
+        [9] [10 11 12 13] [14 15 16 17] [18]
+                    ^
+        Selected font height is 12, since it is closer to 9 than it is to 18.
+        ```
+
+    - **Return value**
+      Integer that reflects the currently selected font-height **after** updating with **closest multiple of nine** of the passed font_height.
+
+    - **Examples**
+
+      ```ruby
+      pngfyer.set_font_height(9)  # => 9
+      pngfyer.set_font_height(12) # => 9
+      pngfyer.set_font_height(16) # => 18
+      pngfyer.set_font_height(18) # => 18
+      ```
+
+  - `Pngfyer#set_horizontal_spacing`
+    Updates the currently selected horizontal-spacing.
+
+    - **Arguments**
+      Takes a single `non-negative` integer, i.e. an integer that is zero or larger.
+
+    - **Return value**
+      Integer that reflects the currently selected horizontal-spacing **after** updating with the passed horizontal-spacing.
+
+    - **Examples**
+
+       ```ruby
+      pngfyer.set_horizontal_spacing(0)  # => 0
+      pngfyer.set_horizontal_spacing(1)  # => 1
+      pngfyer.set_horizontal_spacing(15) # => 15
+       ```
+
+  - `Pngfyer#set_vertical_spacing`
+    The same as `Pngfyer#set_horizontal_spacing` but for the vertical-spacing.
+
+  - `Pngfyer#set_text`
+    Updates the currently selected text.
+    The supported ASCII character codes are `10`(newline) and in the range  `32..126`.
+
+    This method does a lot behind the scenes, but the philosophy is the following:
+
+    A text without replacement text is taken as is, which means that it must contain only supported characters and cannot be empty. If a text contains unsupported characters, these characters are replaced with the replacement text, if a replacement text is defined, where the replacement text must **always** contain only supported characters or be empty.
+
+    **Note**: When the text contains only unsupported characters and the replacement text is empty, the text ends up being empty because all text characters have been replaced with an empty string, which is not allowed since that would result in an image resolution of 0x0.
+
+    - **Arguments**
+
+      - `text`(required)
+        String that must not be empty and can contain any characters.
+      - `replacement_text`(optional)
+        String that can be empty or contain any supported ASCII character.
+        - If this argument is not passed, the `text` argument is taken as is.
+        - Otherwise **every** **single** **unsupported** **character** in the `text` argument is replaced with the **whole** `replacement_text`.
+
+    - **Return value**
+      String that reflects the currently selected text **after** updating with whatever is the result of the text and replacement text.
+
+    - **Examples**
+      **Note**: Trailing newlines are interpreted and generate an empty line
+
+       ```ruby
+      pngfyer.set_text('ABC') # => "ABC"
+      pngfyer.set_text("First line\nSecond line\n") # => "First line\nSecond line\n"
+      pngfyer.set_text("A\u2713C", '?') # => "A?C" because \u2713 is unsupported
+       ```
+
+      
 
 #### How it works
 
