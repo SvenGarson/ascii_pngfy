@@ -13,7 +13,7 @@
 - [Raising errors VS acting on return values](https://github.com/SvenGarson/ascii_pngfy#raising-custom-errors-vs-acting-on-return-values)
 - [Upfront design considerations an TDD](https://github.com/SvenGarson/ascii_pngfy#upfront-design-considerations-and-test-driven-development)
 - [Observed Issues - Bugs](https://github.com/SvenGarson/ascii_pngfy#observed-issues---bugs)
-- [Todos fot this project](https://github.com/SvenGarson/ascii_pngfy#todos-for-this-projects)
+- [Todos for this project](https://github.com/SvenGarson/ascii_pngfy#todos-for-this-project)
 - [Feature ideas](https://github.com/SvenGarson/ascii_pngfy#feature-ideas)
 
 
