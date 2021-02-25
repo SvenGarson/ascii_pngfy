@@ -18,7 +18,7 @@
 
 
 
-#### What is AsciiPngfy - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### What is AsciiPngfy
 
 ---
 
@@ -42,7 +42,7 @@ The Gem can be configured to change the result using the following settings:
 - **text and replacement text**: text to render into the generated image and optional replacement text that replaces unsupported characters in the text
 
 
-#### Example - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Example
 
 Here an example of AsciiPngfy in action, where the source code itself is used as text:
 
@@ -91,7 +91,7 @@ Generated `result.png`:
 
 
 
-#### Inspiration and Credits - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Inspiration and Credits
 
 ---
 
@@ -104,7 +104,7 @@ Please pay [Monogram ](https://datagoblin.itch.io/monogram) a visit.
 
 
 
-#### Disclaimer - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Disclaimer
 
 ---
 
@@ -126,7 +126,7 @@ This Gem will stay as is for a while (6 months or so) under the version 0.2.0 be
 
 
 
-#### Installation - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Installation
 
 ---
 
@@ -149,7 +149,7 @@ gem 'ascii_pngfy'
 
 
 
-#### Usage - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Usage
 
 ---
 
@@ -324,7 +324,7 @@ gem 'ascii_pngfy'
 
     
 
-#### Current limitations - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Current limitations
 
 ---
 
@@ -351,7 +351,7 @@ This means that a text block with (2160/9) = 240 lines and (3840/5) = 768 column
 
 
 
-#### The public Gem interface - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### The public Gem interface
 
 ---
 
@@ -365,7 +365,7 @@ Initial goals in terms of the Gems interface:
   
 
 
-#### Raising (custom) errors VS acting on return values - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Raising (custom) errors VS acting on return values
 
 ---
 
@@ -408,7 +408,7 @@ This implementation is subject to big change, but the reason I added so many Exc
   - A text that has too many lines and requires more vertical space than the limit 4K consumer resolution has or the vertical spacing makes it surpass that limit
     
 
-#### Upfront design considerations and Test driven development - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Upfront design considerations and Test driven development
 
 ---
 
@@ -422,7 +422,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 
 
 
-#### Observed Issues - Bugs - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Observed Issues - Bugs
 
 ---
 
@@ -433,7 +433,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 
 #### 
 
-#### Todos for this project - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Todos for this project
 
 ---
 
@@ -448,7 +448,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 - Make sure that exceptions raised also work in situation where the user decides to catch the error, but fails to gracefully handle the error, i.e, when the error persists in the state of the implementation because no action was taken, and the procedures which should be enforced by the raised error are ignored by the Gem user.
 - Online bugtracker
 
-#### Feature ideas - [Index](https://github.com/SvenGarson/ascii_pngfy#index)
+#### Feature ideas
 
 ---
 
