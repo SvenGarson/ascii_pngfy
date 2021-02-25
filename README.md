@@ -277,7 +277,7 @@ gem 'ascii_pngfy'
       pngfyer.set_text('ABC') # => "ABC"
       pngfyer.set_text("First line\nSecond line\n") # => "First line\nSecond line\n"
       pngfyer.set_text("A\u2713C", '?') # => "A?C" because \u2713 is unsupported
-   ```
+      ```
     
 - `Pngfyer#pngfy`
   Generates an `AsciiPngfy::Result` objects based on the previously set settings.
