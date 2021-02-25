@@ -1,3 +1,23 @@
+#### Index
+
+---
+
+- [What is AsciiPngfy](https://github.com/SvenGarson/ascii_pngfy#what-is-asciipngfy)
+- [Example](https://github.com/SvenGarson/ascii_pngfy#example)
+- [Inspiration and credits](https://github.com/SvenGarson/ascii_pngfy#inspiration-and-credits)
+- [Disclaimer](https://github.com/SvenGarson/ascii_pngfy#disclaimer)
+- [Installation](https://github.com/SvenGarson/ascii_pngfy#installation)
+- [Usage](https://github.com/SvenGarson/ascii_pngfy#usage)
+- [Current limitations](https://github.com/SvenGarson/ascii_pngfy#current-limitations)
+- [Considerations for the public Gem interface](https://github.com/SvenGarson/ascii_pngfy#the-public-gem-interface)
+- [Raising errors VS acting on return values](https://github.com/SvenGarson/ascii_pngfy#raising-custom-errors-vs-acting-on-return-values)
+- [Upfront design considerations an TDD](https://github.com/SvenGarson/ascii_pngfy#upfront-design-considerations-and-test-driven-development)
+- [Observed Issues - Bugs](https://github.com/SvenGarson/ascii_pngfy#observed-issues---bugs)
+- [Todos fot this project](https://github.com/SvenGarson/ascii_pngfy#todos-for-this-projects)
+- [Feature ideas](https://github.com/SvenGarson/ascii_pngfy#feature-ideas)
+
+
+
 #### What is AsciiPngfy
 
 ---
@@ -22,6 +42,7 @@ The Gem can be configured to change the result using the following settings:
 - **text and replacement text**: text to render into the generated image and optional replacement text that replaces unsupported characters in the text
 
 
+#### Example
 
 Here an example of AsciiPngfy in action, where the source code itself is used as text:
 
@@ -412,7 +433,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 
 #### 
 
-#### Todos for this projects
+#### Todos for this project
 
 ---
 
@@ -425,7 +446,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 - Determine how to track changes made to the repository and what changes are made to the public Gem interface so that the according SemVer version number can be incremented
 - Online demo using a simple http/s application as Heroku application
 - Make sure that exceptions raised also work in situation where the user decides to catch the error, but fails to gracefully handle the error, i.e, when the error persists in the state of the implementation because no action was taken, and the procedures which should be enforced by the raised error are ignored by the Gem user.
-  
+- Online bugtracker
 
 #### Feature ideas
 
