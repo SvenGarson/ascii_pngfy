@@ -82,6 +82,29 @@ Please pay [Monogram ](https://datagoblin.itch.io/monogram) a visit.
 
 
 
+
+#### Disclaimer
+
+---
+
+This is my first Ruby Gem and emerged as portfolio project to get to know Ruby better,
+
+Developing a robust, fully tested and documented Ruby Gem through Test Driven Development showed itself to be a much more complex task than I anticipated it to be.
+
+While the Gem is absolutely usable at this point, I would like:
+
+- the architecture to be much simpler
+- to re-write most of the test code
+- to solidify the public interface on terms of the errors thrown
+- provide helpers to enable the user to enforce limitations without catching exceptions
+- properly document the gem using Ruby RDoc
+- implement a proper build system that tests **both** the source code **and** the gem after it is bundled and before it is published published
+
+
+This Gem will stay as is for a while (6 months or so) under the version 0.2.0 because I need to focus on other things in order to get a backend-developer job. I really enjoy this project and will think about a better interface and implementation. I may fix a few bugs here and there, but my next move is probably a major rewrite in order to account for most of my initial mistakes and to make AsciiPngfy a delight to use.
+
+
+
 #### Installation
 
 ---
@@ -105,7 +128,7 @@ gem 'ascii_pngfy'
 
 
 
-#### Basic Usage
+#### Usage
 
 ---
 
@@ -243,11 +266,11 @@ gem 'ascii_pngfy'
   - **Return value**
     Instance of `AsciiPngfy::Result` that reflects the previously set settings and the result data through the following data points:
 
-    - `#png`: instance of `ChunkyPNG::Image` the text is rendered into
+    - `#png`: instance of [`ChunkyPNG::Image`](https://github.com/wvanbergen/chunky_png/blob/master/lib/chunky_png/image.rb) the text is rendered into
     - `#png.width`: the width of the generated PNG
     - `#png.height`: the height of the generated PNG
-    - `#render_width`: the width in pixels the generated PNG should be drawn at using NEAREST filters in order to display the text according to the font-height setting
-    - `#render_height`: the height in pixels the generated PNG should be drawn at using NEAREST filters in order to display the text according to the font-height setting
+    - `#render_width`: the width in pixels the generated PNG should be drawn at using a NEAREST filter in order to display the text according to the font-height setting
+    - `#render_height`: the height in pixels the generated PNG should be drawn at using a NEAREST filter in order to display the text according to the font-height setting
     - `#settings`: instance of `AsciiPngfy::Settings::SettingsSnapshot` that represents the settings at the point of result generation
     - `#settings.font_color`: instance of `AsciiPngfy::ColorRGBA`  representing the font-color used for this result
     - `#settings.background_color`: instance of `AsciiPngfy::ColorRGBA`  representing the background-color used for this result
@@ -378,7 +401,7 @@ Based on previous experiences I knew to avoid designing the whole application up
 
 
 
-#### Observed Issues
+#### Observed Issues - Bugs
 
 ---
 
