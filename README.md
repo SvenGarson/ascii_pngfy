@@ -270,8 +270,8 @@ gem 'ascii_pngfy'
       String that reflects the currently selected text **after** updating with whatever is the result of the text and replacement text.
 
     - **Examples**
-      
-**Note**: Trailing newlines are interpreted and generate an empty line
+
+      **Note**: Trailing newlines are interpreted and generate an empty line
       
        ```ruby
       pngfyer.set_text('ABC') # => "ABC"
