@@ -46,6 +46,10 @@ The Gem can be configured to change the result using the following settings:
 
 #### Example
 
+---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 Here an example of AsciiPngfy in action, where the source code itself is used as text:
 
 ```ruby
