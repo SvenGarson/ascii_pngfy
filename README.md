@@ -4,6 +4,7 @@
 
 - [What is AsciiPngfy](https://github.com/SvenGarson/ascii_pngfy#what-is-asciipngfy)
 - [Example](https://github.com/SvenGarson/ascii_pngfy#example)
+- [Supported character glyph designs](https://github.com/SvenGarson/ascii_pngfy#supported-character-glyph-designs)
 - [Inspiration and credits](https://github.com/SvenGarson/ascii_pngfy#inspiration-and-credits)
 - [Disclaimer](https://github.com/SvenGarson/ascii_pngfy#disclaimer)
 - [Installation](https://github.com/SvenGarson/ascii_pngfy#installation)
@@ -93,7 +94,17 @@ result.png.save(save_directory)
 
 Generated `result.png`:
 
-![alt text](resources/images/example.png "example.png")
+![alt text](resources/images/example_scaled.png "example_scaled.png")
+
+
+
+#### Supported character glyph designs
+
+---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
+![dd](resources/images/all_supported_glyphs_scaled.png "all_supported_glyphs_scaled.png")
 
 
 
