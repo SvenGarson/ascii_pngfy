@@ -19,6 +19,7 @@
 
 
 
+
 #### What is AsciiPngfy
 
 ---
@@ -43,6 +44,9 @@ The Gem can be configured to change the result using the following settings:
 - **horizontal-spacing**: number of empty horizontal character cells between characters
 - **vertical-spacing**: number of empty vertical character cells between lines
 - **text and replacement text**: text to render into the generated image and optional replacement text that replaces unsupported characters in the text
+
+
+
 
 
 #### Example
@@ -98,6 +102,8 @@ Generated `result.png`:
 
 
 
+
+
 #### Supported character glyph designs
 
 ---
@@ -105,6 +111,8 @@ Generated `result.png`:
 [Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
 ![dd](resources/images/all_supported_glyphs_scaled.png "all_supported_glyphs_scaled.png")
+
+
 
 
 
@@ -119,6 +127,7 @@ AsciiPngfy is inspired by the awesome [Monogram](https://datagoblin.itch.io/mono
 While this Gem is **not** a collaboration with [Monogram](https://datagoblin.itch.io/monogram), **nor** are the supported character glyph designs necessarily the same design as the [Monogram](https://datagoblin.itch.io/monogram) font, I wanted to credit the creator of this amazing low-resolution, monospaced pixel font.
 
 Please pay [Monogram ](https://datagoblin.itch.io/monogram) a visit.
+
 
 
 
@@ -147,6 +156,8 @@ This Gem will stay as is for a while (6 months or so) under the version 0.2.0 be
 
 
 
+
+
 #### Installation
 
 ---
@@ -169,6 +180,8 @@ ruby '2.7.2'
 
 gem 'ascii_pngfy'
 ```
+
+
 
 
 
@@ -350,6 +363,8 @@ gem 'ascii_pngfy'
 
     
 
+
+
 #### Current limitations
 
 ---
@@ -379,6 +394,8 @@ This means that a text block with (2160/9) = 240 lines and (3840/5) = 768 column
 
 
 
+
+
 #### The public Gem interface
 
 ---
@@ -393,6 +410,9 @@ Initial goals in terms of the Gems interface:
 - separation of concerns between methods
 - make use of symbol arguments/parameters when appropriate
   
+
+
+
 
 
 #### Raising (custom) errors VS acting on return values
@@ -440,6 +460,10 @@ This implementation is subject to big change, but the reason I added so many Exc
   - A text that has too many lines and requires more vertical space than the limit 4K consumer resolution has or the vertical spacing makes it surpass that limit
     
 
+
+
+
+
 #### Upfront design considerations and Test driven development
 
 ---
@@ -455,6 +479,10 @@ Based on previous experiences I knew to avoid designing the whole application up
 - Start to increase test coverage of the code base once the architecture solidifies
   
 
+
+
+
+
 #### Observed Issues - Bugs
 
 ---
@@ -465,7 +493,10 @@ Based on previous experiences I knew to avoid designing the whole application up
 
   `and "ᜣ" are all invalid text characters. Must contain only characters with ASCII code 10 or in the range (32..126).`
   This seems like a bug that is caused  during unsupported character extraction to provide the error message.
-  
+
+
+
+
 
 #### Todos for this project
 
@@ -483,6 +514,10 @@ Based on previous experiences I knew to avoid designing the whole application up
 - Online demo using a simple http/s application as Heroku application
 - Make sure that exceptions raised also work in situation where the user decides to catch the error, but fails to gracefully handle the error, i.e, when the error persists in the state of the implementation because no action was taken, and the procedures which should be enforced by the raised error are ignored by the Gem user.
 - Online bugtracker
+
+
+
+
 
 #### Feature ideas
 
