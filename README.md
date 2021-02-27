@@ -22,6 +22,8 @@
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 AsciiPngfy is a Ruby Gem that enables you to render ASCII character text into a PNG image using a 5x9 monospaced font.
 
 The following **96** ASCII characters are currently supported:
@@ -95,6 +97,8 @@ Generated `result.png`:
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 AsciiPngfy is inspired by the awesome [Monogram](https://datagoblin.itch.io/monogram). I fell in love with this low-resolution monospaced font the moment I stumbled upon it.
 
 While this Gem is **not** a collaboration with [Monogram](https://datagoblin.itch.io/monogram), **nor** are the supported character glyph designs necessarily the same design as the [Monogram](https://datagoblin.itch.io/monogram) font, I wanted to credit the creator of this amazing low-resolution, monospaced pixel font.
@@ -107,6 +111,8 @@ Please pay [Monogram ](https://datagoblin.itch.io/monogram) a visit.
 #### Disclaimer
 
 ---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
 This is my first Ruby Gem and emerged as portfolio project to get to know Ruby better,
 
@@ -130,6 +136,8 @@ This Gem will stay as is for a while (6 months or so) under the version 0.2.0 be
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 Download and install ascii_pngfy with the following gem command:
 
 ```
@@ -152,6 +160,8 @@ gem 'ascii_pngfy'
 #### Usage
 
 ---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
 - Instantiate a `AsciiPngfy::Pngfyer` which acts as the Gem interface:
 
@@ -277,7 +287,7 @@ gem 'ascii_pngfy'
       pngfyer.set_text('ABC') # => "ABC"
       pngfyer.set_text("First line\nSecond line\n") # => "First line\nSecond line\n"
       pngfyer.set_text("A\u2713C", '?') # => "A?C" because \u2713 is unsupported
-      ```
+       ```
     
 - `Pngfyer#pngfy`
   Generates an `AsciiPngfy::Result` objects based on the previously set settings.
@@ -329,6 +339,8 @@ gem 'ascii_pngfy'
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 While chunky_png and the PNG specifications can handle very high image resolutions on both the horizontal and vertical axis, I wanted to keep the images at a reasonable size that reflects the intentional use, which is video games or other rendering centric applications.
 
 Initial tests showed that a naive approach to generating a 4K resolution image took a few seconds on a mid-level consumer laptop. This has many reasons off course, some of which are:
@@ -356,6 +368,8 @@ This means that a text block with (2160/9) = 240 lines and (3840/5) = 768 column
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 Initial goals in terms of the Gems interface:
 
 - powerful, expressive, minimalist
@@ -369,6 +383,8 @@ Initial goals in terms of the Gems interface:
 #### Raising (custom) errors VS acting on return values
 
 ---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
   In order to enforce the internal requirements and limitations, the considered options were:
 
@@ -413,6 +429,8 @@ This implementation is subject to big change, but the reason I added so many Exc
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 Based on previous experiences I knew to avoid designing the whole application upfront if the development cycle includes test driven development. This has a few reasons, which again, are based on personal experience:
 
 - Analysis paralysis
@@ -420,23 +438,25 @@ Based on previous experiences I knew to avoid designing the whole application up
 - Not everything can and should be planned for, instead leave room for interpretation
 - Start the test driven development cycle at the public interface level and leave the implementation details out of the test suites initially so that the architecture can change accordingly
 - Start to increase test coverage of the code base once the architecture solidifies
-
-
+  
 
 #### Observed Issues - Bugs
 
 ---
 
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
+
 - When text contains single unsupported, unicode character, the error message conveys that  there is more than a single text character through the following example message:
 
   `and "ᜣ" are all invalid text characters. Must contain only characters with ASCII code 10 or in the range (32..126).`
   This seems like a bug that is caused  during unsupported character extraction to provide the error message.
-
-#### 
+  
 
 #### Todos for this project
 
 ---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
 - Re-design all the test-suites
 - Document using RDoc once the design solidifies
@@ -452,6 +472,8 @@ Based on previous experiences I knew to avoid designing the whole application up
 #### Feature ideas
 
 ---
+
+[Back to index](https://github.com/SvenGarson/ascii_pngfy#index)
 
 - Add line-through formatting
 - Replace current with more accurate alpha compositing method using pre-multiplied alpha compositing
